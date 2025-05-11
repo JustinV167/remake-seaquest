@@ -1,6 +1,6 @@
 const config={
-    width:320,
-    height:180,
+    width:320 * 2,
+    height:180 * 2,
     parent:"container",
     type:Phaser.AUTO,
     scene:{
@@ -16,11 +16,11 @@ const config={
 const game=new Phaser.Game(config)
 
 function preload(){
-   this.load.image("submarine","./assets/submarine.png")
+   this.load.image("submarine","../../public/assets/submarine.png")
 }
 function create(){
     this.submarine=this.physics.add.image(180,90,"submarine")
-    this.submarine.setScale(0.1)
+    this.submarine.setScale(1.5)
     this.submarine.setCollideWorldBounds(true)
     this.cursor=this.input.keyboard.createCursorKeys()
     this.keyEvents=keyEvents
