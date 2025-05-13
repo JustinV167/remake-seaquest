@@ -24,6 +24,7 @@ class Preload extends Phaser.Scene {
         });
 
   this.load.image('submarine', '../../assets/submarine_0.png');
+  this.load.image('missile', '../../assets/missile.png');
   this.load.image('evilSubmarine', '../../assets/evilSubmarine.png');
   this.load.image('fish', '../../assets/fish.png');
   this.load.image('person', '../../assets/personSwimming.png');
