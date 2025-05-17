@@ -1,5 +1,5 @@
 class Person extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, texture,initDirection=false,speed=100) {
+  constructor(scene, x, y, texture,initDirection=false,speed=130) {
     super(scene, x, y, texture)
     this.scene = scene
     scene.add.existing(this);

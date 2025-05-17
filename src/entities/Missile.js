@@ -7,12 +7,12 @@ class Missile extends Phaser.Physics.Arcade.Sprite {
         this.resetCallback = resetCallback
         this.direction = direction
         this.flipX = direction
-        this.speed = 400
+        this.speed = 600
         this.scene = scene
         this.id = Math.floor(Math.random() * 999)
     }
     update() {
-        this.setVelocityX(this.direction ? -this.speed : this.speed)
+        this.setVelocityX(this.direction ? - this.speed : this.speed)
         if (this.x > this.scene.cameras.main.width + 10) {
             this.reset();
         } else if (this.x < -50) {

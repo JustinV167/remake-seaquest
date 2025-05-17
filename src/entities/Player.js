@@ -10,7 +10,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.setScale(1.5);
     this.setCollideWorldBounds(true);
     this.speed = 200;
-    this.fireOn = true
+    this.fireOn = true;
   }
 
   movement(cursors) {
@@ -37,6 +37,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
   deleteMissile() {
+
     this.missile.shift()
   }
   cooldownFire(){
