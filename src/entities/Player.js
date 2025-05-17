@@ -6,10 +6,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene = scene
     scene.add.existing(this);
     scene.physics.add.existing(this);
-    this.missile
+    this.missile=[]
     this.setScale(1.5);
     this.setCollideWorldBounds(true);
-    this.scene = scene;
     this.speed = 200;
     this.fireOn = true
   }
@@ -32,16 +31,21 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityX(this.speed);
       this.flipX = false;
     }
-    if (cursors.space.isDown && !this.missile) {
-      this.missile = new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this))
+    if (cursors.space.isDown && this.fireOn) {
+      this.missile.push(new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this)))
+      this.cooldownFire()
     }
   }
   deleteMissile() {
-    this.missile = null
+    this.missile.shift()
+  }
+  cooldownFire(){
+    this.fireOn=false
+    setTimeout(()=>{this.fireOn=true},400)
   }
   update() {
     if (this.missile)
-      this.missile.update()
+      this.missile.forEach(item=>item.update())
   }
 }
 
