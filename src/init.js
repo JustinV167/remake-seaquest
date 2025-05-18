@@ -3,8 +3,8 @@ import Menu from './scenes/Menu.js'
 import Game from './scenes/Game.js'
 
 const config={
-    width:320 * 2,
-    height:180 * 2,
+    width:320 * 3,
+    height:180 * 3,
     backgroundColor: 0x374aa1,
     parent:"container",
     type:Phaser.AUTO,
