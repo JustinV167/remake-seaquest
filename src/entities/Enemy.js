@@ -11,7 +11,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setScale(1.5);
     this.scene = scene;
     this.speed = 200;
-    this.direction = 1;
+    this.direction = this.randomSign();
+    console.log(this.direction)
     this.bool = bool;
     this.shootInterval = 2000;
     this.shootTimer = 0;
@@ -20,8 +21,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
  preUpdate(time, delta) {
     super.preUpdate(time, delta);
     
-    // Movimiento básico
     this.setVelocityX(this.speed * this.direction);
+
+    this.movement()
 
     if (this.x > this.scene.cameras.main.width + 10) {
       this.reset();
@@ -38,6 +40,17 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.shootTimer = 0;
       }
     }
+  }
+    movement() {
+    if (this.direction === -1) {
+      this.flipX = true;
+    } else{
+      this.flipX = false;
+    }
+  }
+  randomSign() {
+  const sign = Math.floor((Math.random() * 2))
+  return sign === 0 ? -1 : 1
   }
   reset() {
     this.disableBody(true, true);

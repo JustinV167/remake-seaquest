@@ -25,12 +25,14 @@ class Game extends Phaser.Scene {
 
     this.player = new Player(this, 100, 300, 'submarine')
     this.person = new Person(this, 100, 200, 'person',false)
-    this.enemy = new Enemy(this, 50, 350, 'fish', true);
+    this.fishEnemy = new Enemy(this, 50, 350, 'fish', false);
+    this.submarineEnemy = new Enemy(this, 50, 400, 'evilSubmarine', true);
 
     const seaTop = new Platform(this, 0, 0, 'sea', {width: 128, height: 40})
     this.sea = seaTop.createPlatformRow(this.cameras.main.height/4.5)
 
-    this.enemies.add(this.enemy)
+    this.enemies.add(this.fishEnemy)
+    this.enemies.add(this.submarineEnemy)
     this.cursors = this.input.keyboard.createCursorKeys()
     this.physics.add.collider(this.player, this.ground)
     this.physics.add.collider(this.player, this.rainbow)
@@ -39,10 +41,12 @@ class Game extends Phaser.Scene {
   update() {
     this.player.movement(this.cursors)
     this.player.update()
-    this.enemy.update()
+    this.fishEnemy.update()
+    this.submarineEnemy.update()
     this.person.update()
     this.physics.world.collide(this.person,this.player,this.personCollider.bind(this))
     this.physics.add.collider(this.player.missile, this.enemies, this.projectileHitEnemy.bind(this));
+    this.physics.add.collider(this.submarineEnemy.missile, this.player, this.playerHitEnemy.bind(this));
     console.log(this.points)
   }
   personCollider(){
