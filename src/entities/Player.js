@@ -32,25 +32,25 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityX(this.speed);
       this.flipX = false;
     }
-    if (cursors.space.isDown && this.fireOn && this.canShoot == true) {
+    if (cursors.space.isDown && this.fireOn) {
       const missile = new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this))
       this.missile.push(missile)
       this.cooldownFire()
     }
   }
-  reset(){
-  this.disableBody(true, true)
-  this.canShoot = false
+  reset() {
+    this.disableBody(true, true)
+    this.fireOn = false
   }
   deleteMissile() {
     this.missile.shift()
   }
-  cooldownFire(){
-    this.fireOn=false
-    setTimeout(()=>{this.fireOn=true},400)
+  cooldownFire() {
+    this.fireOn = false
+    setTimeout(() => { this.fireOn = true }, 400)
   }
   update() {
-    this.missile = this.missile.filter(m => m.active);
+    // this.missile = this.missile.filter(m => m.active);
     this.missile.forEach(m => m.update());
   }
 }

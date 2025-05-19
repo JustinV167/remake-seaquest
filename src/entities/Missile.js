@@ -14,7 +14,6 @@ class Missile extends Phaser.Physics.Arcade.Sprite {
     }
     update() {
         if (!this.active) return;
-
         this.setVelocityX(this.direction ? - this.speed : this.speed)
         if (this.x > this.scene.cameras.main.width + 10) {
             this.reset();
