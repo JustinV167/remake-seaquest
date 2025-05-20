@@ -26,12 +26,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     this.movement()
     this.underWater()
-    if (this.x > this.scene.cameras.main.width + 10) {
-      this.reset();
-    } else if (this.x < -50) {
-      this.reset();
-    }
-    this.missile = this.missile.filter(m => m.active);
+
     this.missile.forEach(m => m.update());
 
       this.shootTimer += delta;
@@ -43,6 +38,14 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
   }
     movement() {
+    if (this.x > this.scene.cameras.main.width + 10) {
+      this.emit('enemyOut')
+      this.reset();
+    } else if (this.x < -50) {
+      this.emit('enemyOut')
+      this.reset();
+    }
+
     if (this.direction === -1) {
       this.flipX = true;
     } else{

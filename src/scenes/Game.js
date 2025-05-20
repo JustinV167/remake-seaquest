@@ -14,6 +14,11 @@ class Game extends Phaser.Scene {
     this.direction = this.randomSign()
     this.x = this.direction === -1 ? 920 : -20
     this.y = this.randomHigh()
+    this.enemyTypes = ['fish', 'evilSubmarine'];
+    this.spawnCooldown = 0; 
+    this.spawnTimer = 0;
+    this.maxEnemies = 5; 
+    this.spawnInterval = 2500;    
   }
   create() {
     // Elementos visuales
@@ -23,7 +28,6 @@ class Game extends Phaser.Scene {
     this.physics.world.setBoundsCollision(true, true, true, true);
     this.platforms2 = this.physics.add.staticGroup()
     this.projectiles = this.physics.add.group()
-    this.enemies = this.physics.add.group()
     const floor = new Platform(this, null, null, 'sand')
     this.ground = floor.createPlatformRow(this.cameras.main.height);
     const topLimit = new Platform(this, null, null, 'rainbow', { width: 50, height: 40 })
@@ -31,6 +35,7 @@ class Game extends Phaser.Scene {
     const seaTop = new Platform(this, 0, 0, 'sea', { width: 128, height: 40 })
     this.sea = seaTop.createPlatformRow(this.cameras.main.height / 4.5)
     this.sea.setDepth(10)
+
     this.personsMenu = new PersonsMenu(this)
     this.personSave = this.personsMenu.counter.length
     this.OxygenBar = new OxygenBar(this)
@@ -40,39 +45,48 @@ class Game extends Phaser.Scene {
     // Entidades
     this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine')
     this.person = new Person(this, 100, 200, 'person', false)
-    this.fishEnemy = new Enemy(this, this.x, this.y, 'fish', false, this.direction);
-    this.submarineEnemy = new Enemy(this, this.x, 79, 'evilSubmarine', true, this.direction);
-    this.enemies.add(this.fishEnemy)
-    this.enemies.add(this.submarineEnemy)
     this.player.setDepth(0)
+    this.enemies = this.physics.add.group()
     this.enemies.setDepth(0)
+    this.activeEnemies = 0;
+    
     // Eventos
+    this.max = this.cameras.main.width
     this.cursors = this.input.keyboard.createCursorKeys()
     this.physics.add.collider(this.player, this.ground)
     this.physics.add.collider(this.player, this.seaTop)
     this.physics.add.collider(this.player, this.rainbow)
-    this.physics.add.collider(this.player, this.enemies, this.playerHitEnemy, null, this);
     this.prevCollision = true
   }
+
   collisionRechargeZone() {
     if (this.OxygenBar.nOxygen < 100) {
       this.OxygenBar.setStateRecover({ paused: false,delay:1 })
       this.OxygenBar.setStateDiscount({ paused: true })
     }
   }
+
   endCollisionRechargeZonere() {
     this.OxygenBar.setStateDiscount({ paused: false })
     this.OxygenBar.setStateRecover({ paused: true })
   }
-  update() {
+
+  update(time, delta) {
+
+    this.spawnCooldown += delta;
+    if (this.spawnCooldown >= this.spawnInterval) {
+        this.spawnEnemy();
+      console.log('cooldwon =' + this.spawnCooldown)
+        this.spawnCooldown = 0;
+      console.log(this.spawnCooldown)
+    }
+
     this.player.movement(this.cursors)
     this.player.update()
-    this.fishEnemy.update()
-    this.submarineEnemy.update()
     this.person.update()
     this.physics.world.collide(this.person, this.player, this.personCollider.bind(this))
     this.physics.add.collider(this.player.missile, this.enemies, this.projectileHitEnemy.bind(this));
-    this.physics.add.collider(this.submarineEnemy.missile, this.player, this.playerHitEnemy.bind(this));
+
     if (this.physics.overlap(this.player, this.rechargeZone)) {
       this.collisionRechargeZone()
       this.prevCollision = true
@@ -83,6 +97,50 @@ class Game extends Phaser.Scene {
       }
     }
   }
+
+    spawnEnemy() {
+    if (this.activeEnemies >= this.maxEnemies) return;
+
+    const direction = Phaser.Math.Between(0, 1) ? 1 : -1;
+    const x = direction === -1 ? 920 : -20;
+    const enemyType = Phaser.Math.RND.pick(this.enemyTypes);
+      const y = Phaser.Math.Between(100, 400);
+    
+    let enemy;
+    if (enemyType === 'fish' && y >= 110) {
+      enemy = new Enemy(this, x, y, 'fish', false, direction);
+    } else {
+      enemy = new Enemy(this, x, y, 'evilSubmarine', true, direction);
+      this.physics.add.collider(enemy.missile, this.player, this.playerHitEnemy.bind(this));
+    }
+    this.activeEnemies++;
+    console.log('enemigos activos = ' + this.activeEnemies)
+    this.enemies.add(enemy);
+    this.enemies.setDepth(0);
+    this.physics.add.collider(this.player, this.enemies, this.playerHitEnemy, null, this);
+
+      enemy.on('enemyOut', () => {
+      this.activeEnemies--;
+    });
+
+  }
+
+  updateEnemyPositions() {
+    this.direction = this.randomSign();
+    this.x = this.direction === -1 ? 920 : -20;
+    this.y = this.randomHigh();
+    
+    if(this.fishEnemy && this.fishEnemy.active) {
+        this.fishEnemy.setPosition(this.x, this.y);
+        this.fishEnemy.changeDirection(this.direction);
+    }
+    
+    if(this.submarineEnemy && this.submarineEnemy.active) {
+        this.submarineEnemy.setPosition(this.x, this.y);
+        this.submarineEnemy.changeDirection(this.direction);
+    }
+  }
+
   personCollider() {
     this.person.reset()
     if (this.personSave < 6) {
@@ -90,24 +148,30 @@ class Game extends Phaser.Scene {
       this.personsMenu.addPerson()
     }
   }
+
   projectileHitEnemy(projectile, enemies) {
     projectile.reset()
     enemies.reset()
+    this.activeEnemies--;
     this.points += 20
   }
+
   playerHitEnemy(player, enemy) {
     player.reset()
     enemy.reset()
+
   }
+
   randomSign() {
   const sign = Math.floor((Math.random() * 2))
   return sign === 0 ? -1 : 1
   } 
+
   randomHigh() {
   const sign = Math.max(79, Math.floor((Math.random() * 401)))
-    console.log(sign)
   return sign
   }
+
 
 }
 
