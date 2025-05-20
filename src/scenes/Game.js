@@ -4,6 +4,7 @@ import Player from '../entities/Player.js'
 import Enemy from '../entities/Enemy.js'
 import Person from '../entities/Person.js'
 import PersonsMenu from './PersonsMenu.js'
+import OxygenBar from './OxygenBar.js'
 
 class Game extends Phaser.Scene {
   constructor() {
@@ -30,10 +31,14 @@ class Game extends Phaser.Scene {
     const seaTop = new Platform(this, 0, 0, 'sea', { width: 128, height: 40 })
     this.sea = seaTop.createPlatformRow(this.cameras.main.height / 4.5)
     this.sea.setDepth(10)
-    this.personsMenu= new PersonsMenu(this)
-    
+    this.personsMenu = new PersonsMenu(this)
+    this.personSave = this.personsMenu.counter.length
+    this.OxygenBar = new OxygenBar(this)
+    this.rechargeZone = this.physics.add.existing(this.add.rectangle(0, 70, this.cameras.main.width, 10, 0xffffff).setOrigin(0, 0.5).setAlpha(0))
+    this.rechargeZone.body.moves = false
+
     // Entidades
-    this.player = new Player(this, 100, 300, 'submarine')
+    this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine')
     this.person = new Person(this, 100, 200, 'person', false)
     this.fishEnemy = new Enemy(this, this.x, this.y, 'fish', false, this.direction);
     this.submarineEnemy = new Enemy(this, this.x, 79, 'evilSubmarine', true, this.direction);
@@ -44,8 +49,20 @@ class Game extends Phaser.Scene {
     // Eventos
     this.cursors = this.input.keyboard.createCursorKeys()
     this.physics.add.collider(this.player, this.ground)
+    this.physics.add.collider(this.player, this.seaTop)
     this.physics.add.collider(this.player, this.rainbow)
     this.physics.add.collider(this.player, this.enemies, this.playerHitEnemy, null, this);
+    this.prevCollision = true
+  }
+  collisionRechargeZone() {
+    if (this.OxygenBar.nOxygen < 100) {
+      this.OxygenBar.setStateRecover({ paused: false,delay:1 })
+      this.OxygenBar.setStateDiscount({ paused: true })
+    }
+  }
+  endCollisionRechargeZonere() {
+    this.OxygenBar.setStateDiscount({ paused: false })
+    this.OxygenBar.setStateRecover({ paused: true })
   }
   update() {
     this.player.movement(this.cursors)
@@ -56,10 +73,19 @@ class Game extends Phaser.Scene {
     this.physics.world.collide(this.person, this.player, this.personCollider.bind(this))
     this.physics.add.collider(this.player.missile, this.enemies, this.projectileHitEnemy.bind(this));
     this.physics.add.collider(this.submarineEnemy.missile, this.player, this.playerHitEnemy.bind(this));
+    if (this.physics.overlap(this.player, this.rechargeZone)) {
+      this.collisionRechargeZone()
+      this.prevCollision = true
+    } else {
+      if (this.prevCollision) {
+        this.endCollisionRechargeZonere()
+        this.prevCollision = false
+      }
+    }
   }
   personCollider() {
     this.person.reset()
-    if(this.personSave<6){
+    if (this.personSave < 6) {
       this.personSave++
       this.personsMenu.addPerson()
     }
@@ -68,7 +94,6 @@ class Game extends Phaser.Scene {
     projectile.reset()
     enemies.reset()
     this.points += 20
-    this.personsMenu.removeAllPerson()
   }
   playerHitEnemy(player, enemy) {
     player.reset()
