@@ -11,6 +11,10 @@ class Game extends Phaser.Scene {
     super({ key: "Game" })
     this.personSave = 0
     this.points = 0
+    this.level = 1
+    this.difficultyLevel = 1;
+    this.nextDifficulty = 2;
+    this.enemySpeed = 180
     this.direction = this.randomSign()
     this.x = this.direction === -1 ? 920 : -20
     this.y = this.randomHigh()
@@ -18,7 +22,7 @@ class Game extends Phaser.Scene {
     this.spawnCooldown = 0; 
     this.spawnTimer = 0;
     this.maxEnemies = 5; 
-    this.spawnInterval = 2500;    
+    this.spawnInterval = 3000;    
   }
   create() {
     // Elementos visuales
@@ -72,13 +76,14 @@ class Game extends Phaser.Scene {
   }
 
   update(time, delta) {
+    if (this.level >= this.nextDifficulty) {
+        this.increaseDifficulty();
+    }
 
     this.spawnCooldown += delta;
     if (this.spawnCooldown >= this.spawnInterval) {
-        this.spawnEnemy();
-      console.log('cooldwon =' + this.spawnCooldown)
+        this.spawnWave();
         this.spawnCooldown = 0;
-      console.log(this.spawnCooldown)
     }
 
     this.player.movement(this.cursors)
@@ -98,11 +103,26 @@ class Game extends Phaser.Scene {
     }
   }
 
+spawnWave() {
+    if (this.activeEnemies >= this.maxEnemies) return;
+
+    const waveSize = Phaser.Math.Between(2, 4);
+    const delay = 300;
+
+    for (let i = 0; i < waveSize; i++) {
+        this.time.delayedCall(i * delay, () => {
+            if (this.activeEnemies < this.maxEnemies) {
+                this.spawnEnemy();
+            }
+        });
+    }
+}
+
     spawnEnemy() {
     if (this.activeEnemies >= this.maxEnemies) return;
 
     const direction = Phaser.Math.Between(0, 1) ? 1 : -1;
-    const x = direction === -1 ? 920 : -20;
+    const x = direction === -1 ? this.max : -20;
     const enemyType = Phaser.Math.RND.pick(this.enemyTypes);
       const y = Phaser.Math.Between(100, 400);
     
@@ -113,8 +133,8 @@ class Game extends Phaser.Scene {
       enemy = new Enemy(this, x, y, 'evilSubmarine', true, direction);
       this.physics.add.collider(enemy.missile, this.player, this.playerHitEnemy.bind(this));
     }
+    enemy.speed = this.enemySpeed
     this.activeEnemies++;
-    console.log('enemigos activos = ' + this.activeEnemies)
     this.enemies.add(enemy);
     this.enemies.setDepth(0);
     this.physics.add.collider(this.player, this.enemies, this.playerHitEnemy, null, this);
@@ -125,28 +145,13 @@ class Game extends Phaser.Scene {
 
   }
 
-  updateEnemyPositions() {
-    this.direction = this.randomSign();
-    this.x = this.direction === -1 ? 920 : -20;
-    this.y = this.randomHigh();
-    
-    if(this.fishEnemy && this.fishEnemy.active) {
-        this.fishEnemy.setPosition(this.x, this.y);
-        this.fishEnemy.changeDirection(this.direction);
-    }
-    
-    if(this.submarineEnemy && this.submarineEnemy.active) {
-        this.submarineEnemy.setPosition(this.x, this.y);
-        this.submarineEnemy.changeDirection(this.direction);
-    }
-  }
-
   personCollider() {
     this.person.reset()
     if (this.personSave < 6) {
       this.personSave++
+      this.level++
       this.personsMenu.addPerson()
-    }
+    } 
   }
 
   projectileHitEnemy(projectile, enemies) {
@@ -158,8 +163,6 @@ class Game extends Phaser.Scene {
 
   playerHitEnemy(player, enemy) {
     player.reset()
-    enemy.reset()
-
   }
 
   randomSign() {
@@ -172,6 +175,16 @@ class Game extends Phaser.Scene {
   return sign
   }
 
+  increaseDifficulty() {
+        this.difficultyLevel++;
+        this.maxEnemies = Math.min(5 + this.difficultyLevel, 15);
+        this.waveSize = Math.min(2 + Math.floor(this.difficultyLevel/2), 6);
+        this.spawnInterval = Math.max(1500, 3000 - (this.difficultyLevel * 200));
+        this.enemySpeed = Math.min(350, this.enemySpeed + 10);
+    console.log(this.enemySpeed)
+        this.nextDifficulty++;
+        console.log('Dificultad aumentada a nivel ' + this.difficultyLevel);
+    }
 
 }
 
