@@ -10,12 +10,15 @@ class Game extends Phaser.Scene {
     super({ key: "Game" })
     this.personSave = 0
     this.points = 0
+    this.direction = this.randomSign()
+    this.x = this.direction === -1 ? 920 : -20
+    this.y = this.randomHigh()
   }
   create() {
     // Elementos visuales
     const rectangle = this.add.graphics();
     rectangle.fillStyle(0x465bbb, 1);
-    rectangle.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height / 7.5);
+    rectangle.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height / 7.9);
     this.physics.world.setBoundsCollision(true, true, true, true);
     this.platforms2 = this.physics.add.staticGroup()
     this.projectiles = this.physics.add.group()
@@ -26,16 +29,18 @@ class Game extends Phaser.Scene {
     this.rainbow = topLimit.createPlatformRow(this.cameras.main.height / 7)
     const seaTop = new Platform(this, 0, 0, 'sea', { width: 128, height: 40 })
     this.sea = seaTop.createPlatformRow(this.cameras.main.height / 4.5)
+    this.sea.setDepth(10)
     this.personsMenu= new PersonsMenu(this)
-
     
     // Entidades
     this.player = new Player(this, 100, 300, 'submarine')
     this.person = new Person(this, 100, 200, 'person', false)
-    this.fishEnemy = new Enemy(this, 50, 350, 'fish', false);
-    this.submarineEnemy = new Enemy(this, 50, 400, 'evilSubmarine', true);
+    this.fishEnemy = new Enemy(this, this.x, this.y, 'fish', false, this.direction);
+    this.submarineEnemy = new Enemy(this, this.x, 79, 'evilSubmarine', true, this.direction);
     this.enemies.add(this.fishEnemy)
     this.enemies.add(this.submarineEnemy)
+    this.player.setDepth(0)
+    this.enemies.setDepth(0)
     // Eventos
     this.cursors = this.input.keyboard.createCursorKeys()
     this.physics.add.collider(this.player, this.ground)
@@ -68,6 +73,15 @@ class Game extends Phaser.Scene {
   playerHitEnemy(player, enemy) {
     player.reset()
     enemy.reset()
+  }
+  randomSign() {
+  const sign = Math.floor((Math.random() * 2))
+  return sign === 0 ? -1 : 1
+  } 
+  randomHigh() {
+  const sign = Math.max(79, Math.floor((Math.random() * 401)))
+    console.log(sign)
+  return sign
   }
 
 }

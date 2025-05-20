@@ -1,18 +1,19 @@
 import Missile from '../entities/Missile.js'
 
 class Enemy extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, texture, bool) {
-    super(scene, x, y, texture, bool)
+  constructor(scene, x, y, texture, bool, sign) {
+    super(scene, x, y, texture, bool, sign)
 
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.missile= []
+    this.limit = 90
+    this.surface = false
     this.setCollideWorldBounds(false);
     this.setScale(1.5);
     this.scene = scene;
     this.speed = 200;
-    this.direction = this.randomSign();
-    console.log(this.direction)
+    this.direction = sign;
     this.bool = bool;
     this.shootInterval = 2000;
     this.shootTimer = 0;
@@ -24,7 +25,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setVelocityX(this.speed * this.direction);
 
     this.movement()
-
+    this.underWater()
     if (this.x > this.scene.cameras.main.width + 10) {
       this.reset();
     } else if (this.x < -50) {
@@ -48,18 +49,17 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.flipX = false;
     }
   }
-  randomSign() {
-  const sign = Math.floor((Math.random() * 2))
-  return sign === 0 ? -1 : 1
-  }
   reset() {
     this.disableBody(true, true);
   }
     deleteMissile() {
     this.missile.shift()
   }
+  underWater() {
+    this.surface = this.y <= this.limit;
+  }
   shoot(bool){
-    if (bool === true) {
+    if (bool === true && this.surface == false) {
     const missile = new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this))
     this.missile.push(missile)
     }

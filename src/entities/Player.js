@@ -6,8 +6,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene = scene
     scene.add.existing(this);
     scene.physics.add.existing(this);
-    this.missile = []
-    this.canShoot = true
+    this.missile = [];
+    this.limit = 90
+    this.surface = false
+    this.alive = true;
     this.setCollideWorldBounds(true);
     this.setScale(1.5);
     this.speed = 200;
@@ -32,7 +34,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityX(this.speed);
       this.flipX = false;
     }
-    if (cursors.space.isDown && this.fireOn) {
+
+    if (cursors.space.isDown && this.fireOn && this.alive == true && this.surface == false) {
       const missile = new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this))
       this.missile.push(missile)
       this.cooldownFire()
@@ -41,6 +44,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   reset() {
     this.disableBody(true, true)
     this.fireOn = false
+    this.alive = false
   }
   deleteMissile() {
     this.missile.shift()
@@ -49,9 +53,14 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.fireOn = false
     setTimeout(() => { this.fireOn = true }, 400)
   }
+  underWater() {
+    this.surface = this.y <= this.limit;
+  }
   update() {
     // this.missile = this.missile.filter(m => m.active);
+    this.underWater()
     this.missile.forEach(m => m.update());
+
   }
 }
 
