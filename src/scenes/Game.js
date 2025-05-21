@@ -31,7 +31,9 @@ class Game extends Phaser.Scene {
     this.worldTemplate = new WorldTemplate(this)
     this.personsMenu = new PersonsMenu(this)
     this.personSave = this.personsMenu.counter.length
-    this.OxygenBar = new OxygenBar(this)
+    this.OxygenBar = new OxygenBar(this,null,
+      ()=>this.player.disableBody(true,true),//destruir cuando no tenga oxigeno
+      ()=>this.player.body.moves=true)//habilitar movimiento cuando se llene la barra de oxigeno
     this.rechargeZone = new RechargeZone(this, this.OxygenBar,0, 70)
 
     // Entidades

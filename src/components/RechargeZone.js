@@ -20,6 +20,7 @@ class RechargeZone {
         if (this.OxygenBar.nOxygen < 100) {
             this.OxygenBar.setStateRecover({ paused: false, delay: 1 })
             this.OxygenBar.setStateDiscount({ paused: true })
+            this.entity.body.moves=false
         }
     }
 
