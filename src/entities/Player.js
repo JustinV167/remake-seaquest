@@ -14,6 +14,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.setScale(1.5);
     this.speed = 200;
     this.fireOn = true;
+    this.setDepth(0)
   }
 
   movement(cursors) {
