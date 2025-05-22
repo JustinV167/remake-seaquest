@@ -15,6 +15,24 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.speed = 200;
     this.fireOn = true;
     this.setDepth(0)
+    this.originalTint = 0xffffff;
+    this.hitTint = 0xff0000;
+    
+    // 2. Cargar sistema de partículas (NUEVA API)
+    this.hitEmitter = this.scene.add.particles(0, 0, 'flares', {
+      frame: 'red',
+      scale: { start: 0.5, end: 0 },
+      speed: 100,
+      lifespan: 500,
+      blendMode: 'ADD',
+      emitting: false // No emitir hasta necesario
+    });
+    this.isDead = false;
+    //Debug de hitboxes
+    /*this.physics.world.createDebugGraphic();
+    const debugGraphics = this.scene.add.graphics({ fillStyle: { color: 0xff00ff, alpha: 0.3 } });
+    this.scene.physics.world.debugGraphic = debugGraphics;
+    */
   }
 
   movement(cursors) {
@@ -46,6 +64,39 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.disableBody(true, true)
     this.fireOn = false
     this.alive = false
+  }
+
+ takeDamage() {
+    this.setTint(this.hitTint);
+    
+    this.hitEmitter.setPosition(this.x, this.y);
+    this.hitEmitter.explode(10); // 10 partículas
+    
+    this.scene.time.delayedCall(300, () => {
+      this.setTint(this.originalTint);
+    });
+  }
+
+  die() {
+    const deathEmitter = this.scene.add.particles(this.x, this.y, 'flares', {
+      frame: ['red', 'yellow', 'white'],
+      scale: { start: 0.8, end: 0 },
+      speed: { min: 50, max: 300 },
+      angle: { min: 0, max: 360 },
+      lifespan: 800, 
+      quantity: 15,
+      blendMode: 'ADD',
+      gravityY: 200,
+      emitting: true
+    });
+
+      this.reset()
+    this.scene.time.delayedCall(1000, () => {
+      deathEmitter.destroy(); 
+    });
+
+    this.setTint(0x000000);
+    this.scene.cameras.main.shake(300, 0.02);
   }
   deleteMissile() {
     this.missile.shift()

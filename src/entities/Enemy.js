@@ -17,13 +17,16 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.bool = bool;
     this.shootInterval = 2000;
     this.shootTimer = 0;
+    this.initialY = y; 
+    this.amplitude = 15; 
+    this.frequency = 0.009; 
   }
 
  preUpdate(time, delta) {
     super.preUpdate(time, delta);
     
     this.setVelocityX(this.speed * this.direction);
-
+    this.y = this.initialY + Math.sin(this.x * this.frequency) * this.amplitude;
     this.movement()
     this.underWater()
 
@@ -37,14 +40,15 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
       }
     }
   }
-    movement() {
-    if (this.x > this.scene.cameras.main.width + 10) {
+
+  movement() {
+   if (this.x > this.scene.cameras.main.width + 10) {
       this.emit('enemyOut')
       this.reset();
-    } else if (this.x < -50) {
+  } else if (this.x < -50) {
       this.emit('enemyOut')
       this.reset();
-    }
+  }
 
     if (this.direction === -1) {
       this.flipX = true;
@@ -52,15 +56,19 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.flipX = false;
     }
   }
+
   reset() {
     this.disableBody(true, true);
   }
-    deleteMissile() {
-    this.missile.shift()
+
+  deleteMissile() {
+  this.missile.shift()
   }
+
   underWater() {
     this.surface = this.y <= this.limit;
   }
+
   shoot(bool){
     if (bool === true && this.surface == false) {
     const missile = new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this))

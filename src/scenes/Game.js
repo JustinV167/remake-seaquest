@@ -1,10 +1,11 @@
 import CollisionObject from '../entities/CollisionObject.js'
+import EnemySpawner from '../entities/EnemySpawner.js'
 import Player from '../entities/Player.js'
 import Enemy from '../entities/Enemy.js'
 import Person from '../entities/Person.js'
 import PersonsMenu from '../components/PersonsMenu.js'
 import OxygenBar from '../components/OxygenBar.js'
-import WorldTemplate from '../components/worldTemplate.js'
+import WorldTemplate from '../components/WorldTemplate.js'
 import RechargeZone from '../components/RechargeZone.js'
 
 
@@ -20,15 +21,11 @@ class Game extends Phaser.Scene {
     this.direction = this.randomSign()
     this.x = this.direction === -1 ? 920 : -20
     this.y = this.randomHigh()
-    this.enemyTypes = ['fish', 'evilSubmarine'];
-    this.spawnCooldown = 0;
-    this.spawnTimer = 0;
-    this.maxEnemies = 5;
-    this.spawnInterval = 3000;
   }
   create() {
     // Elementos visuales
     this.worldTemplate = new WorldTemplate(this)
+    this.enemySpawner = new EnemySpawner(this)
     this.personsMenu = new PersonsMenu(this)
     this.personSave = this.personsMenu.counter.length
     this.OxygenBar = new OxygenBar(this,null,
@@ -55,62 +52,16 @@ class Game extends Phaser.Scene {
 
   update(time, delta) {
     if (this.level >= this.nextDifficulty) {
-      this.increaseDifficulty();
+      this.enemySpawner.increaseDifficulty(this.difficultyLevel, this.nextDifficulty);
     }
 
-    this.spawnCooldown += delta;
-    if (this.spawnCooldown >= this.spawnInterval) {
-      this.spawnWave();
-      this.spawnCooldown = 0;
-    }
-
+    this.enemySpawner.update(time, delta)
     this.player.movement(this.cursors)
     this.player.update()
     this.person.update()
     this.physics.world.collide(this.person, this.player, this.personCollider.bind(this))
     this.physics.add.collider(this.player.missile, this.enemies, this.projectileHitEnemy.bind(this));
-  }
-
-  spawnWave() {
-    if (this.activeEnemies >= this.maxEnemies) return;
-
-    const waveSize = Phaser.Math.Between(2, 4);
-    const delay = 300;
-
-    for (let i = 0; i < waveSize; i++) {
-      this.time.delayedCall(i * delay, () => {
-        if (this.activeEnemies < this.maxEnemies) {
-          this.spawnEnemy();
-        }
-      });
-    }
-  }
-
-  spawnEnemy() {
-    if (this.activeEnemies >= this.maxEnemies) return;
-
-    const direction = Phaser.Math.Between(0, 1) ? 1 : -1;
-    const x = direction === -1 ? this.max : -20;
-    const enemyType = Phaser.Math.RND.pick(this.enemyTypes);
-    const y = Phaser.Math.Between(100, 400);
-
-    let enemy;
-    if (enemyType === 'fish' && y >= 110) {
-      enemy = new Enemy(this, x, y, 'fish', false, direction);
-    } else {
-      enemy = new Enemy(this, x, y, 'evilSubmarine', true, direction);
-      this.physics.add.collider(enemy.missile, this.player, this.playerHitEnemy.bind(this));
-    }
-    enemy.speed = this.enemySpeed
-    this.activeEnemies++;
-    this.enemies.add(enemy);
-    this.enemies.setDepth(0);
-    this.physics.add.collider(this.player, this.enemies, this.playerHitEnemy, null, this);
-
-    enemy.on('enemyOut', () => {
-      this.activeEnemies--;
-    });
-
+    this.physics.add.collider(this.enemies, this.player, this.playerHitEnemy.bind(this));
   }
 
   personCollider() {
@@ -130,7 +81,11 @@ class Game extends Phaser.Scene {
   }
 
   playerHitEnemy(player, enemy) {
+    player.die(true)
+    player.once('animationcomplete', () => {
     player.reset()
+    })
+    enemy.reset()
   }
 
   randomSign() {
@@ -143,18 +98,6 @@ class Game extends Phaser.Scene {
     return sign
   }
 
-  increaseDifficulty() {
-    this.difficultyLevel++;
-    this.maxEnemies = Math.min(5 + this.difficultyLevel, 15);
-    this.waveSize = Math.min(2 + Math.floor(this.difficultyLevel / 2), 6);
-    this.spawnInterval = Math.max(1500, 3000 - (this.difficultyLevel * 200));
-    this.enemySpeed = Math.min(350, this.enemySpeed + 10);
-    console.log(this.enemySpeed)
-    this.nextDifficulty++;
-    console.log('Dificultad aumentada a nivel ' + this.difficultyLevel);
-  }
-
 }
 
 export default Game
-
