@@ -21,18 +21,12 @@ class EnemySpawner {
   }
 
   increaseDifficulty(difficulty, next) {
-    difficulty++;
     this.maxEnemies = Math.min(5 + difficulty, 15);
     this.waveSize = Math.min(2 + Math.floor(difficulty / 2), 6);
-    this.spawnInterval = Math.max(1500, 3000 - (difficulty + 10));
-    this.enemySpeed = Math.min(350, this.enemySpeed + 10);
-    next++;
+    this.spawnInterval = Math.max(1500, 3000 - (difficulty + 5));
+    this.enemySpeed = Math.min(350, this.enemySpeed + 5);
     console.log('Dificultad aumentada a nivel ' + difficulty);
-  }
-
-  playerHitEnemy(player, enemy) {
-    player.reset()
-    enemy.reset()
+    console.log(this.scene.difficultyLevel)
   }
 
   spawnWave() {
@@ -63,7 +57,7 @@ class EnemySpawner {
     enemy = new Enemy(this.scene, x, y, 'fish', false, direction);
   } else {
     enemy = new Enemy(this.scene, x, y, 'evilSubmarine', true, direction);
-        this.scene.physics.add.collider(enemy.missile, this.scene.player, this.scene.playerHitEnemy.bind(this));
+        this.scene.physics.add.collider(this.scene.player, enemy.missile, this.scene.playerHitEnemy.bind(this));
   }
   enemy.speed = this.enemySpeed
   active++;

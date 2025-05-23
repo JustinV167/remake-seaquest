@@ -14,6 +14,7 @@ class Game extends Phaser.Scene {
     super({ key: "Game" })
     this.personSave = 0
     this.points = 0
+    this.forRound = 20
     this.level = 1
     this.difficultyLevel = 1;
     this.nextDifficulty = 2;
@@ -52,6 +53,10 @@ class Game extends Phaser.Scene {
 
   update(time, delta) {
     if (this.level >= this.nextDifficulty) {
+      this.nextDifficulty++
+      this.difficultyLevel++
+      this.forRound += 10
+      this.player.speed += 2.5
       this.enemySpawner.increaseDifficulty(this.difficultyLevel, this.nextDifficulty);
     }
 
@@ -75,16 +80,14 @@ class Game extends Phaser.Scene {
 
   projectileHitEnemy(projectile, enemies) {
     projectile.reset()
-    enemies.reset()
+    enemies.die()
     this.activeEnemies--;
-    this.points += 20
+    this.points += this.forRound
+    console.log(this.points)
   }
 
   playerHitEnemy(player, enemy) {
-    player.die(true)
-    player.once('animationcomplete', () => {
-    player.reset()
-    })
+    player.takeDamage()
     enemy.reset()
   }
 

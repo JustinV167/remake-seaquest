@@ -29,12 +29,6 @@ class Preload extends Phaser.Scene {
         startFrame: 0, endFrame: 5
       });
 
-    this.load.spritesheet('submarineDie', '../../assets/submarineDie.png',
-      {
-        frameWidth: 23,frameHeight:24, 
-        startFrame: 0, endFrame: 8
-      });
-
   this.load.image('submarine', '../../assets/submarine_0.png');
   this.load.image('missile', '../../assets/missile.png');
   this.load.image('evilSubmarine', '../../assets/evilSubmarine.png');
@@ -45,6 +39,7 @@ class Preload extends Phaser.Scene {
   this.load.image('sand', '../../assets/sandcube.png');
   this.load.image('sea', '../../assets/sea.png');  
   this.load.image('flares', '../../assets/flares.png');
+  this.load.image('Enemyflares', '../../assets/EnemyFlares.png');
 
   }
 

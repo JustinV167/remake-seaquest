@@ -7,12 +7,12 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.missile = [];
-    this.limit = 90
+    this.limit = 90 
     this.surface = false
     this.alive = true;
     this.setCollideWorldBounds(true);
-    this.setScale(1.5);
-    this.speed = 200;
+    this.setScale(1.8);
+    this.speed = 210;
     this.fireOn = true;
     this.setDepth(0)
     
@@ -34,10 +34,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityY(this.speed);
     }
 
-    if (cursors.left.isDown) {
+    if (cursors.left.isDown && this.alive === true) {
       this.setVelocityX(-this.speed);
       this.flipX = true;
-    } else if (cursors.right.isDown) {
+    } else if (cursors.right.isDown && this.alive === true) {
       this.setVelocityX(this.speed);
       this.flipX = false;
     }
@@ -51,21 +51,37 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   reset() {
     this.disableBody(true, true)
     this.fireOn = false
-    this.alive = false
   }
+  takeDamage() {
+    this.body.enable = false
+    this.alive = false
+this.scene.tweens.addCounter({
+    from: 0,
+    to: 5, // Número de parpadeos
+    duration: 1000, // Duración total
+    onUpdate: (tween) => {
+      const value = Math.floor(tween.getValue());
+      this.setVisible(value % 2 === 0); // Alternar visibilidad
+    },
+    onComplete: () => {
+      this.setVisible(true); 
+      this.die(); 
+    }
+  });
+}
   die() {
+
     const deathEmitter = this.scene.add.particles(this.x, this.y, 'flares', {
-      frame: ['red', 'yellow', 'white'],
-      scale: { start: 0.8, end: 0 },
+      scale: { start: 0.3, end: 0 },
       speed: { min: 50, max: 300 },
       angle: { min: 0, max: 360 },
-      lifespan: 800, 
-      quantity: 15,
+      lifespan: 500, 
+      quantity: 5,
       blendMode: 'ADD',
       gravityY: 200,
       emitting: true
     });
-
+ 
     this.reset()
     this.scene.time.delayedCall(1000, () => {
       deathEmitter.destroy(); 

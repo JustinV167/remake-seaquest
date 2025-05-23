@@ -12,13 +12,13 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(false);
     this.setScale(1.5);
     this.scene = scene;
-    this.speed = 200;
+    this.speed = 180;
     this.direction = sign;
     this.bool = bool;
-    this.shootInterval = 2000;
+    this.shootInterval = 1500;
     this.shootTimer = 0;
     this.initialY = y; 
-    this.amplitude = 15; 
+    this.amplitude = 6; 
     this.frequency = 0.009; 
   }
 
@@ -55,6 +55,28 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     } else{
       this.flipX = false;
     }
+  }
+
+  die() {
+
+    const deathEmitter = this.scene.add.particles(this.x, this.y, 'Enemyflares', {
+    speed: { min: 20, max: 100 },
+    angle: { min: 0, max: 360 },
+    lifespan: 200,
+    scale: { start: 0.1, end: 0.3 },
+    gravityY: 50,
+    accelerationX: { min: -10, max: 10 },
+    accelerationY: { min: -10, max: 10 },
+    alpha: { start: 1, end: 0 },
+    });
+ 
+    this.reset()
+    this.scene.time.delayedCall(500, () => {
+      deathEmitter.destroy(); 
+    });
+
+    this.setTint(0x000000);
+    this.scene.cameras.main.shake(300, 0.02);
   }
 
   reset() {
