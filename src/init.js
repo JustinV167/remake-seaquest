@@ -1,7 +1,7 @@
 import Preload from './scenes/Preload.js'
 import Menu from './scenes/Menu.js'
 import Game from './scenes/Game.js'
-
+import GameOver from './scenes/GameOver.js'
 const config={
     width:320 * 3,
     height:180 * 3,
@@ -11,7 +11,8 @@ const config={
     scene:[
         Preload,
         Menu,
-        Game
+        Game,
+        GameOver
     ],
     physics:{
         default:"arcade",

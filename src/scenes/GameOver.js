@@ -1,28 +1,42 @@
-export default class Menu extends Phaser.Scene {
+import EnemySpawner from '../entities/EnemySpawner.js'
+import PersonsMenu from '../components/PersonsMenu.js'
+import OxygenBar from '../components/OxygenBar.js'
+import WorldTemplate from '../components/WorldTemplate.js'
+import Lifes from '../components/Lifes.js'
+
+export default class GameOver extends Phaser.Scene {
     constructor() {
-        super({ key: 'Menu' });
+        super({ key: 'GameOver' });
     }
 
     create() {
-        this.title = this.add.text(this.sys.game.config.width/2, this.sys.game.config.width/4, 'Seaquest', {
+        this.worldTemplate = new WorldTemplate(this)
+        this.enemySpawner = new EnemySpawner(this)
+        this.personsMenu = new PersonsMenu(this)
+        this.personSave = this.personsMenu.counter.length
+        this.oxygenBar = new OxygenBar(this, null)
+        this.lifes = new Lifes(this, null, null, 0, 0)
+
+        this.title = this.add.text(this.sys.game.config.width / 2, this.sys.game.config.width / 4, 'Has Perdido!', {
             font: '48px Arial',
             fill: '#ffffff',
             stroke: '#000000',
             strokeThickness: 6
         }).setOrigin(0.5);
 
-        this.createButtons();
+
+        this.createButtons()
     }
 
     createButtons() {
-        this.playButton = this.add.text(this.sys.game.config.width/2, 300, 'Jugar', {
+        this.playButton = this.add.text(this.sys.game.config.width / 2, 300, 'Reintentar', {
             font: '24px Arial',
             fill: '#ffffff',
             backgroundColor: '#2d2d2d',
             padding: { x: 20, y: 10 }
         })
-        .setOrigin(0.5)
-        .setInteractive();
+            .setOrigin(0.5)
+            .setInteractive();
 
         this.playButton.on('pointerover', () => {
             this.playButton.setBackgroundColor('#4d4d4d');
@@ -33,17 +47,8 @@ export default class Menu extends Phaser.Scene {
         });
 
         this.playButton.on('pointerdown', () => {
-            this.scene.start('Game'); 
+            this.scene.start('Game');
         });
-
-        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-
-        this.enterKey.on('down', () => {
-            this.scene.start('Game')
-        })
-
-
-
 
         this.exitButton = this.add.text((this.sys.game.config.width / 2), 360, 'Salir', {
             font: '24px Arial',

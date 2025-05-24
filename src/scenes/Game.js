@@ -37,8 +37,7 @@ class Game extends Phaser.Scene {
     this.personSave = this.personsMenu.counter.length
     this.oxygenBar = new OxygenBar(this,null)
     this.rechargeZone = new RechargeZone(this, this.oxygenBar,0, 70)
-    this.lifes=new Lifes(this)
-    this.oxygenBar.setStateDiscount({delay:1})
+    this.lifes=new Lifes(this,null,()=>setTimeout(()=>this.scene.start('GameOver'),1000))
     // Entidades
     this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine',this.lifes)
     this.rechargeZone.entity = this.player

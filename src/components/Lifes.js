@@ -1,9 +1,10 @@
 class Lifes {
-    constructor(scene,restLifeCallback,outLifesCallback, maxLife = 3, initLife = 3) {
+    constructor(scene, restLifeCallback, outLifesCallback, maxLife = 3, initLife = 3) {
         this.scene = scene
         this.maxLife = maxLife
         this.onlyLifes = []
-        this.restLifeCallback=restLifeCallback
+        this.restLifeCallback = restLifeCallback
+        this.outLifesCallback = outLifesCallback
         this.generateMenu(initLife)
     }
     generateMenu(initLife) {
@@ -32,15 +33,15 @@ class Lifes {
         }
     }
     removeLife(number = 1) {
-        if(number>this.onlyLifes.length){
-            console.log('morio');
+        if (number > this.onlyLifes.length) {
+            if (this.outLifesCallback) this.outLifesCallback()
             return
         }
-        for (let i = this.onlyLifes.length-1; this.onlyLifes.length-1>i-number;) {
-            this.onlyLifes[this.onlyLifes.length-1].disableBody(true, true);
+        for (let i = this.onlyLifes.length - 1; this.onlyLifes.length - 1 > i - number;) {
+            this.onlyLifes[this.onlyLifes.length - 1].disableBody(true, true);
             this.onlyLifes.pop()
         }
-        if(this.restLifeCallback)this.restLifeCallback()
+        if (this.restLifeCallback) this.restLifeCallback()
     }
 }
 export default Lifes
