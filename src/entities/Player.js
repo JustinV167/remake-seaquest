@@ -86,6 +86,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.reset()
     this.scene.time.delayedCall(1000, () => {
       deathEmitter.destroy();
+      this.fireOn = true
     });
 
     this.scene.cameras.main.shake(300, 0.02);
@@ -114,6 +115,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.moves = true
   }
   recover() {
+    this.surface = false
     this.setActive(true)
     this.setVisible(true)
     this.body.enable = true

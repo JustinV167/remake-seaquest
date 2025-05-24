@@ -8,6 +8,7 @@ import OxygenBar from '../components/OxygenBar.js'
 import WorldTemplate from '../components/WorldTemplate.js'
 import RechargeZone from '../components/RechargeZone.js'
 import Lifes from '../components/Lifes.js'
+import SystemPoints from '../components/SystemPoints.js'
 
 class Game extends Phaser.Scene {
   constructor() {
@@ -38,6 +39,7 @@ class Game extends Phaser.Scene {
     this.oxygenBar = new OxygenBar(this,null)
     this.rechargeZone = new RechargeZone(this, this.oxygenBar,0, 70)
     this.lifes=new Lifes(this,null,()=>setTimeout(()=>this.scene.start('GameOver'),1000))
+    this.systemPoints=new SystemPoints(this)
     // Entidades
     this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine',this.lifes)
     this.rechargeZone.entity = this.player
@@ -88,8 +90,7 @@ class Game extends Phaser.Scene {
     projectile.reset()
     enemies.die()
     this.activeEnemies--;
-    this.points += this.forRound
-    console.log(this.points)
+    this.systemPoints.addPoints(this.forRound)
   }
 
   playerHitEnemy(player, enemy) {
