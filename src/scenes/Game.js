@@ -7,7 +7,7 @@ import PersonsMenu from '../components/PersonsMenu.js'
 import OxygenBar from '../components/OxygenBar.js'
 import WorldTemplate from '../components/WorldTemplate.js'
 import RechargeZone from '../components/RechargeZone.js'
-
+import Lifes from '../components/Lifes.js'
 
 class Game extends Phaser.Scene {
   constructor() {
@@ -22,6 +22,12 @@ class Game extends Phaser.Scene {
     this.direction = this.randomSign()
     this.x = this.direction === -1 ? 920 : -20
     this.y = this.randomHigh()
+    this.enemyTypes = ['fish', 'evilSubmarine'];
+    this.spawnCooldown = 0;
+    this.spawnTimer = 0;
+    this.maxEnemies = 5;
+    this.spawnInterval = 3000;
+    this.lifes=3
   }
   create() {
     // Elementos visuales
@@ -29,22 +35,23 @@ class Game extends Phaser.Scene {
     this.enemySpawner = new EnemySpawner(this)
     this.personsMenu = new PersonsMenu(this)
     this.personSave = this.personsMenu.counter.length
-    this.OxygenBar = new OxygenBar(this,null,
-      ()=>this.player.disableBody(true,true),//destruir cuando no tenga oxigeno
-      ()=>this.player.body.moves=true)//habilitar movimiento cuando se llene la barra de oxigeno
-    this.rechargeZone = new RechargeZone(this, this.OxygenBar,0, 70)
-
+    this.oxygenBar = new OxygenBar(this,null)
+    this.rechargeZone = new RechargeZone(this, this.oxygenBar,0, 70)
+    this.lifes=new Lifes(this)
+    this.oxygenBar.setStateDiscount({delay:1})
     // Entidades
-    this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine')
+    this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine',this.lifes)
     this.rechargeZone.entity = this.player
     this.worldTemplate.addEntityCollider(this.player)
-
+    this.oxygenBar.endOxygenCallback=this.player.outOxigen.bind(this.player)
+    this.oxygenBar.fullOxygenCallback=this.player.rechargeAllOxygen.bind(this.player)
+    this.lifes.restLifeCallback=this.player.recover.bind(this.player)
     this.person = new Person(this, 100, 200, 'person', false)
     this.activeEnemies = 0;
 
     this.enemies = this.physics.add.group()
     this.enemies.setDepth(0)
-  
+    
     // Eventos
     this.max = this.cameras.main.width
     this.cursors = this.input.keyboard.createCursorKeys()

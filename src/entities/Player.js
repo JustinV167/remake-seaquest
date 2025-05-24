@@ -1,13 +1,14 @@
 import Missile from '../entities/Missile.js'
 
 class Player extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, texture) {
+  constructor(scene, x, y, texture, lifesSystem) {
     super(scene, x, y, texture)
     this.scene = scene
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    this.lifesSystem = lifesSystem
     this.missile = [];
-    this.limit = 90 
+    this.limit = 90
     this.surface = false
     this.alive = true;
     this.setCollideWorldBounds(true);
@@ -15,7 +16,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.speed = 210;
     this.fireOn = true;
     this.setDepth(0)
-    
+    this.initX = x
+    this.initY = y
     //Debug de hitboxes
     /*this.physics.world.createDebugGraphic();
     const debugGraphics = this.scene.add.graphics({ fillStyle: { color: 0xff00ff, alpha: 0.3 } });
@@ -50,44 +52,42 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
   reset() {
     this.disableBody(true, true)
+    this.lifesSystem.removeLife(1)
     this.fireOn = false
   }
   takeDamage() {
     this.body.enable = false
     this.alive = false
-this.scene.tweens.addCounter({
-    from: 0,
-    to: 5, // Número de parpadeos
-    duration: 1000, // Duración total
-    onUpdate: (tween) => {
-      const value = Math.floor(tween.getValue());
-      this.setVisible(value % 2 === 0); // Alternar visibilidad
-    },
-    onComplete: () => {
-      this.setVisible(true); 
-      this.die(); 
-    }
-  });
-}
+    this.scene.tweens.addCounter({
+      from: 0,
+      to: 5, // Número de parpadeos
+      duration: 1000, // Duración total
+      onUpdate: (tween) => {
+        const value = Math.floor(tween.getValue());
+        this.setVisible(value % 2 === 0); // Alternar visibilidad
+      },
+      onComplete: () => {
+        this.setVisible(true);
+        this.die();
+      }
+    });
+  }
   die() {
-
     const deathEmitter = this.scene.add.particles(this.x, this.y, 'flares', {
       scale: { start: 0.3, end: 0 },
       speed: { min: 50, max: 300 },
       angle: { min: 0, max: 360 },
-      lifespan: 500, 
+      lifespan: 500,
       quantity: 5,
       blendMode: 'ADD',
       gravityY: 200,
       emitting: true
     });
- 
     this.reset()
     this.scene.time.delayedCall(1000, () => {
-      deathEmitter.destroy(); 
+      deathEmitter.destroy();
     });
 
-    this.setTint(0x000000);
     this.scene.cameras.main.shake(300, 0.02);
   }
   deleteMissile() {
@@ -101,10 +101,25 @@ this.scene.tweens.addCounter({
     this.surface = this.y <= this.limit;
   }
   update() {
-    // this.missile = this.missile.filter(m => m.active);
+    this.missile = this.missile.filter(m => m.active);
     this.underWater()
     this.missile.forEach(m => m.update());
 
+  }
+  outOxigen() {
+    if (this.alive)
+      this.takeDamage()
+  }
+  rechargeAllOxygen() {
+    this.body.moves = true
+  }
+  recover() {
+    this.setActive(true)
+    this.setVisible(true)
+    this.body.enable = true
+    this.alive = true
+    this.x = this.initX
+    this.y = this.initY
   }
 }
 

@@ -24,7 +24,7 @@ class RechargeZone {
         }
     }
 
-    endCollisionRechargeZonere() {
+    endCollisionRechargeZone() {
         this.OxygenBar.setStateDiscount({ paused: false })
         this.OxygenBar.setStateRecover({ paused: true })
     }
@@ -35,7 +35,7 @@ class RechargeZone {
             this.prevCollision = true
         } else {
             if (this.prevCollision) {
-                this.endCollisionRechargeZonere()
+                this.endCollisionRechargeZone()
                 this.prevCollision = false
             }
         }
