@@ -50,6 +50,12 @@ export default class GameOver extends Phaser.Scene {
             this.scene.start('Game');
         });
 
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
+        this.enterKey.on('down', () => {
+            this.scene.start('Game')
+        })
+
         this.exitButton = this.add.text((this.sys.game.config.width / 2), 360, 'Salir', {
             font: '24px Arial',
             fill: '#ffffff',
@@ -69,5 +75,12 @@ export default class GameOver extends Phaser.Scene {
         this.exitButton.on('pointerdown', () => {
             this.game.destroy(true)
         });
+
+        this.exitKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
+        this.exitKey.on('down', () => {
+            this.game.destroy(true)
+        })
+
     }
 }

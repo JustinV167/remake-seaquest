@@ -10,7 +10,6 @@ export default class Menu extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 6
         }).setOrigin(0.5);
-
         this.createButtons();
     }
 
@@ -64,5 +63,12 @@ export default class Menu extends Phaser.Scene {
         this.exitButton.on('pointerdown', () => {
             this.game.destroy(true)
         });
+
+        this.exitKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
+        this.exitKey.on('down', () => {
+            this.game.destroy(true)
+        })
+
     }
 }

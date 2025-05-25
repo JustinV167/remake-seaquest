@@ -12,12 +12,18 @@ class EnemySpawner {
         this.enemyTypes = ['fish', 'evilSubmarine'];
   }
 
-  update(time, delta) {
+  update(time, delta, alive) {
        this.waveCooldown += delta;
         if (this.waveCooldown >= this.spawnInterval) {
-            this.spawnWave();
+            this.spawnWave(alive);
             this.waveCooldown = 0;
         }
+  }
+
+  clearAllEnemies() {
+    this.scene.enemies.clear(true, true); 
+    this.activeEnemies = 0; 
+    this.waveCooldown = 0;
   }
 
   increaseDifficulty(difficulty, next) {
@@ -29,7 +35,13 @@ class EnemySpawner {
     console.log(this.scene.difficultyLevel)
   }
 
-  spawnWave() {
+  spawnWave(alive) {
+
+    if (!alive) {
+      this.clearAllEnemies();
+      return;
+    }
+
   if (this.activeEnemies >= this.maxEnemies) return;
 
   const waveSize = Phaser.Math.Between(2, 4);

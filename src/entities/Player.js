@@ -1,11 +1,12 @@
 import Missile from '../entities/Missile.js'
 
 class Player extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, texture, lifesSystem) {
+  constructor(scene, x, y, texture, lifesSystem, audio) {
     super(scene, x, y, texture)
     this.scene = scene
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    this.audio = audio
     this.lifesSystem = lifesSystem
     this.missile = [];
     this.limit = 90
@@ -45,6 +46,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (cursors.space.isDown && this.fireOn && this.alive == true && this.surface == false) {
+      this.audio.play('shoot', { seek: 0.5, rate: 1, volume: 0.8 });
       const missile = new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this))
       this.missile.push(missile)
       this.cooldownFire()
@@ -52,6 +54,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
   reset() {
     this.disableBody(true, true)
+    this.audio.play('die', { duration: 1.5, volume: 0.8 })
     this.lifesSystem.removeLife(1)
     this.fireOn = false
   }

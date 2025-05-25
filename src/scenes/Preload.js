@@ -29,6 +29,7 @@ class Preload extends Phaser.Scene {
         startFrame: 0, endFrame: 5
       });
 
+  //imagen
   this.load.image('submarine', '../../assets/submarine_0.png');
   this.load.image('missile', '../../assets/missile.png');
   this.load.image('evilSubmarine', '../../assets/evilSubmarine.png');
@@ -40,6 +41,13 @@ class Preload extends Phaser.Scene {
   this.load.image('sea', '../../assets/sea.png');  
   this.load.image('flares', '../../assets/flares.png');
   this.load.image('Enemyflares', '../../assets/EnemyFlares.png');
+
+  //audio
+  this.load.audio('get', '../../assets/audio/get.mp3')
+  this.load.audio('metal', '../../assets/audio/metal.mp3')
+  this.load.audio('shoot', '../../assets/audio/shoot.mp3')
+  this.load.audio('die', '../../assets/audio/pipesfx.mp3')
+  this.load.audio('asphyxia', '../../assets/audio/outOfOxygen.mp3')
 
   }
 

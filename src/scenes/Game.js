@@ -1,3 +1,4 @@
+import AudioManager from '../managers/AudioManager.js'
 import CollisionObject from '../entities/CollisionObject.js'
 import EnemySpawner from '../entities/EnemySpawner.js'
 import Player from '../entities/Player.js'
@@ -15,6 +16,7 @@ class Game extends Phaser.Scene {
     super({ key: "Game" })
     this.personSave = 0
     this.points = 0
+    this.extraLifeTrigger = 10000
     this.forRound = 20
     this.level = 1
     this.difficultyLevel = 1;
@@ -40,8 +42,9 @@ class Game extends Phaser.Scene {
     this.rechargeZone = new RechargeZone(this, this.oxygenBar,0, 70)
     this.lifes=new Lifes(this,null,()=>setTimeout(()=>this.scene.start('GameOver'),1000))
     this.systemPoints=new SystemPoints(this)
+    this.audioManager = new AudioManager(this);
     // Entidades
-    this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine',this.lifes)
+    this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine',this.lifes, this.audioManager)
     this.rechargeZone.entity = this.player
     this.worldTemplate.addEntityCollider(this.player)
     this.oxygenBar.endOxygenCallback=this.player.outOxigen.bind(this.player)
@@ -68,7 +71,12 @@ class Game extends Phaser.Scene {
       this.enemySpawner.increaseDifficulty(this.difficultyLevel, this.nextDifficulty);
     }
 
-    this.enemySpawner.update(time, delta)
+    if (this.points >= this.extraLifeTrigger) {
+      this.extraLifeTrigger += 10000
+      this.lifes.addLifes(1)
+    }
+
+    this.enemySpawner.update(time, delta, this.player.alive)
     this.player.movement(this.cursors)
     this.player.update()
     this.person.update()
@@ -78,6 +86,7 @@ class Game extends Phaser.Scene {
   }
 
   personCollider() {
+    this.audioManager.play('get', { seek: 0.5, rate: 1, volume: 2 });
     this.person.reset()
     if (this.personSave < 6) {
       this.personSave++
@@ -87,6 +96,7 @@ class Game extends Phaser.Scene {
   }
 
   projectileHitEnemy(projectile, enemies) {
+    this.audioManager.play('metal', { seek: 0.5, volume: 0.8 });
     projectile.reset()
     enemies.die()
     this.activeEnemies--;
