@@ -30,6 +30,8 @@ class Preload extends Phaser.Scene {
       });
 
   //imagen
+  this.load.image('instructive', '../../assets/instructive.png');
+  this.load.image('menu', '../../assets/Menu.png');
   this.load.image('submarine', '../../assets/submarine_0.png');
   this.load.image('missile', '../../assets/missile.png');
   this.load.image('evilSubmarine', '../../assets/evilSubmarine.png');

@@ -10,7 +10,7 @@ class Lifes {
     generateMenu(initLife) {
         this.text = this.scene.add.text(15, 10, 'vidas:', {
             fontSize: '28px',
-            fontFamily: 'Courier',
+            fontFamily: 'Retropix',
             color: 'white',
             stroke: '#000000',
             strokeThickness: 2,

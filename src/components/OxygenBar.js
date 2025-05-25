@@ -22,7 +22,7 @@ class OxygenBar {
     generateMenu() {
         this.text = this.scene.add.text(this.positionX + 16, this.positionY, 'oxigeno:', {
             fontSize: '28px',
-            fontFamily: 'Courier',
+            fontFamily: 'Retropix',
             color: 'white',
             stroke: '#000000',
             strokeThickness: 2,
@@ -36,7 +36,7 @@ class OxygenBar {
             }
         })
         this.text.setOrigin(0.5)
-        this.scene.add.rectangle(this.positionX + 90, this.positionY + 3, this.oxygenWidth + 5, 15, 0x333333).setOrigin(0, 0.5);
+        this.progressRect = this.scene.add.rectangle(this.positionX + 90, this.positionY + 3, this.oxygenWidth + 5, 15, 0x333333).setOrigin(0, 0.5);
         this.oxygenBar = this.scene.add.rectangle(this.positionX + 92.5, this.positionY + 3, this.oxygenWidth, 10, 0xffffff).setOrigin(0, 0.5);
     }
     setStateDiscount(newState = {}) {
@@ -50,11 +50,17 @@ class OxygenBar {
             this.oxygenDiscounter.paused = true
             return
         }
+
+        if (this.nOxygen < 40) {
+        this.oxygenBar.setFillStyle(0xff0000)
+        }
+
         this.updateOxygenBar()
         this.nOxygen -= 0.1
     }
     recoverOxygen() {
         if (this.nOxygen >= 100) {
+        this.oxygenBar.setFillStyle(0xffffff)
             if (this.fullOxygenCallback) this.fullOxygenCallback()
             this.recoverOxygen.paused = true
             return

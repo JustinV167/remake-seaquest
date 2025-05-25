@@ -18,7 +18,7 @@ export default class GameOver extends Phaser.Scene {
         this.lifes = new Lifes(this, null, null, 0, 0)
 
         this.title = this.add.text(this.sys.game.config.width / 2, this.sys.game.config.width / 4, 'Has Perdido!', {
-            font: '48px Arial',
+            font: '48px Retropix',
             fill: '#ffffff',
             stroke: '#000000',
             strokeThickness: 6
@@ -30,7 +30,7 @@ export default class GameOver extends Phaser.Scene {
 
     createButtons() {
         this.playButton = this.add.text(this.sys.game.config.width / 2, 300, 'Reintentar', {
-            font: '24px Arial',
+            font: '24px Retropix',
             fill: '#ffffff',
             backgroundColor: '#2d2d2d',
             padding: { x: 20, y: 10 }
@@ -57,7 +57,7 @@ export default class GameOver extends Phaser.Scene {
         })
 
         this.exitButton = this.add.text((this.sys.game.config.width / 2), 360, 'Salir', {
-            font: '24px Arial',
+            font: '24px Retropix',
             fill: '#ffffff',
             backgroundColor: '#2d2d2d',
             padding: { x: 20, y: 10 }

@@ -1,7 +1,7 @@
 import Person from '../entities/Person.js'
 
 export default class PersonSpawner{
-    constructor(scene,max=3,time=5){
+    constructor(scene,max=3,time=8){
         this.scene=scene
         this.max=max
         this.time=time

@@ -8,7 +8,7 @@ class SystemPoints {
     generateMenu() {
         this.text = this.scene.add.text(this.scene.cameras.main.width / 2, 10, 'puntos:', {
             fontSize: '28px',
-            fontFamily: 'Courier',
+            fontFamily: 'Retropix',
             color: 'white',
             stroke: '#000000',
             strokeThickness: 2,
@@ -25,7 +25,7 @@ class SystemPoints {
         this.text.setDepth(2)
         this.pointText = this.scene.add.text(this.scene.cameras.main.width / 2, 10, this.points, {
             fontSize: '28px',
-            fontFamily: 'Courier',
+            fontFamily: 'Retropix',
             color: 'white',
             stroke: '#000000',
             strokeThickness: 2,
