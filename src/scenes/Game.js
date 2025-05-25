@@ -17,7 +17,7 @@ class Game extends Phaser.Scene {
     this.personSave = 0
     this.points = 0
     this.extraLifeTrigger = 10000
-    this.forRound = 20
+    this.forRound
     this.level = 1
     this.difficultyLevel = 1;
     this.nextDifficulty = 2;
@@ -33,6 +33,7 @@ class Game extends Phaser.Scene {
     this.lifes=3
   }
   create() {
+    this.forRound = 20
     // Elementos visuales
     this.worldTemplate = new WorldTemplate(this)
     this.enemySpawner = new EnemySpawner(this)
@@ -96,7 +97,7 @@ class Game extends Phaser.Scene {
   }
 
   projectileHitEnemy(projectile, enemies) {
-    this.audioManager.play('metal', { seek: 0.5, volume: 0.8 });
+    this.audioManager.play('hit', { seek: 0, volume: 1 });
     projectile.reset()
     enemies.die()
     this.activeEnemies--;

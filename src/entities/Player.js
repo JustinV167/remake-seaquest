@@ -46,7 +46,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (cursors.space.isDown && this.fireOn && this.alive == true && this.surface == false) {
-      this.audio.play('shoot', { seek: 0.5, rate: 1, volume: 0.8 });
+      this.audio.play('shoot', { seek: 0, rate: 1, volume: 1, loop: false });
       const missile = new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this))
       this.missile.push(missile)
       this.cooldownFire()
@@ -54,13 +54,16 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
   reset() {
     this.disableBody(true, true)
-    this.audio.play('die', { duration: 1.5, volume: 0.8 })
+    this.audio.play('die', { volume: 0.8 })
     this.lifesSystem.removeLife(1)
     this.fireOn = false
   }
   takeDamage() {
     this.body.enable = false
-    this.alive = false
+    this.alive = false 
+    this.scene.time.delayedCall(100, () => {
+        if (!this.alive) this.scene.enemySpawner.clearAllEnemies();
+    });
     this.scene.tweens.addCounter({
       from: 0,
       to: 5, // Número de parpadeos
@@ -86,6 +89,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       gravityY: 200,
       emitting: true
     });
+
     this.reset()
     this.scene.time.delayedCall(1000, () => {
       deathEmitter.destroy();
@@ -116,6 +120,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
   rechargeAllOxygen() {
     this.body.moves = true
+    this.audio.play('recover', { volume: 0.8 })
   }
   recover() {
     this.surface = false

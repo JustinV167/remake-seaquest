@@ -15,6 +15,9 @@ class EnemySpawner {
   update(time, delta, alive) {
        this.waveCooldown += delta;
         if (this.waveCooldown >= this.spawnInterval) {
+            this.scene.time.delayedCall(500, () => {
+              if (this.alive === false) this.scene.enemySpawner.clearAllEnemies();
+            });
             this.spawnWave(alive);
             this.waveCooldown = 0;
         }
@@ -36,12 +39,6 @@ class EnemySpawner {
   }
 
   spawnWave(alive) {
-
-    if (!alive) {
-      this.clearAllEnemies();
-      return;
-    }
-
   if (this.activeEnemies >= this.maxEnemies) return;
 
   const waveSize = Phaser.Math.Between(2, 4);
