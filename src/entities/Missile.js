@@ -24,7 +24,7 @@ class Missile extends Phaser.Physics.Arcade.Sprite {
     reset() {
         if (this.resetCallback)
             this.resetCallback(this.id)
-        this.disableBody(true, true);
+        this.destroy();
     }
 }
 export default Missile

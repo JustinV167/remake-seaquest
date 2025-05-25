@@ -13,11 +13,11 @@ class PersonsMenu{
         }
     }
     removePerson(){
-        this.counter[this.counter.length].disableBody(true, true);
+        this.counter[this.counter.length].destroy();
         this.counter.shift()
     }
     removeAllPerson(){
-        this.counter.forEach(item=>item.disableBody(true, true))
+        this.counter.forEach(item=>item.destroy())
         this.counter=[]
     }
 }

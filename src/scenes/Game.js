@@ -1,15 +1,14 @@
 import AudioManager from '../managers/AudioManager.js'
-import CollisionObject from '../entities/CollisionObject.js'
 import EnemySpawner from '../entities/EnemySpawner.js'
 import Player from '../entities/Player.js'
-import Enemy from '../entities/Enemy.js'
-import Person from '../entities/Person.js'
 import PersonsMenu from '../components/PersonsMenu.js'
 import OxygenBar from '../components/OxygenBar.js'
 import WorldTemplate from '../components/WorldTemplate.js'
 import RechargeZone from '../components/RechargeZone.js'
 import Lifes from '../components/Lifes.js'
 import SystemPoints from '../components/SystemPoints.js'
+import PersonSpawner from '../entities/personSpawner.js'
+
 
 class Game extends Phaser.Scene {
   constructor() {
@@ -44,6 +43,7 @@ class Game extends Phaser.Scene {
     this.lifes=new Lifes(this,null,()=>setTimeout(()=>this.scene.start('GameOver'),1000))
     this.systemPoints=new SystemPoints(this)
     this.audioManager = new AudioManager(this);
+    this.personsSpawner=new PersonSpawner(this)
     // Entidades
     this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine',this.lifes, this.audioManager)
     this.rechargeZone.entity = this.player
@@ -51,9 +51,9 @@ class Game extends Phaser.Scene {
     this.oxygenBar.endOxygenCallback=this.player.outOxigen.bind(this.player)
     this.oxygenBar.fullOxygenCallback=this.player.rechargeAllOxygen.bind(this.player)
     this.lifes.restLifeCallback=this.player.recover.bind(this.player)
-    this.person = new Person(this, 100, 200, 'person', false)
     this.activeEnemies = 0;
 
+    this.persons = this.physics.add.group()
     this.enemies = this.physics.add.group()
     this.enemies.setDepth(0)
     
@@ -71,8 +71,8 @@ class Game extends Phaser.Scene {
       this.player.speed += 2.5
       this.enemySpawner.increaseDifficulty(this.difficultyLevel, this.nextDifficulty);
     }
-
-    if (this.points >= this.extraLifeTrigger) {
+    
+    if (this.systemPoints.points >= this.extraLifeTrigger) {
       this.extraLifeTrigger += 10000
       this.lifes.addLifes(1)
     }
@@ -80,15 +80,14 @@ class Game extends Phaser.Scene {
     this.enemySpawner.update(time, delta, this.player.alive)
     this.player.movement(this.cursors)
     this.player.update()
-    this.person.update()
-    this.physics.world.collide(this.person, this.player, this.personCollider.bind(this))
+    this.physics.world.collide(this.persons, this.player, this.personCollider.bind(this))
     this.physics.add.collider(this.player.missile, this.enemies, this.projectileHitEnemy.bind(this));
     this.physics.add.collider(this.enemies, this.player, this.playerHitEnemy.bind(this));
   }
 
-  personCollider() {
+  personCollider(player,person) {
     this.audioManager.play('get', { seek: 0.5, rate: 1, volume: 2 });
-    this.person.reset()
+    person.reset()
     if (this.personSave < 6) {
       this.personSave++
       this.level++

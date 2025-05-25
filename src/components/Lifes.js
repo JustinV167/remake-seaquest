@@ -26,7 +26,11 @@ class Lifes {
         this.text.setDepth(2)
         this.addLifes(initLife)
     }
-    addLifes(number = 1) {
+    addLifes(n = 1) {
+        let number=n
+        if(number+this.onlyLifes.length>this.maxLife){
+            number=this.onlyLifes.length-this.maxLife
+        }
         for (let i = 0; number > i; i++) {
             const lifeSprite = this.scene.physics.add.image(140 + (this.onlyLifes.length * 32), 25, "submarine")
             this.onlyLifes.push(lifeSprite)
@@ -38,7 +42,7 @@ class Lifes {
             return
         }
         for (let i = this.onlyLifes.length - 1; this.onlyLifes.length - 1 > i - number;) {
-            this.onlyLifes[this.onlyLifes.length - 1].disableBody(true, true);
+            this.onlyLifes[this.onlyLifes.length - 1].destroy();
             this.onlyLifes.pop()
         }
         if (this.restLifeCallback) this.restLifeCallback()

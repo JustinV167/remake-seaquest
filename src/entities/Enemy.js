@@ -70,17 +70,17 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     alpha: { start: 1, end: 0 },
     });
  
-    this.reset()
     this.scene.time.delayedCall(500, () => {
       deathEmitter.destroy(); 
     });
 
     this.setTint(0x000000);
     this.scene.cameras.main.shake(300, 0.02);
+    this.reset()
   }
 
   reset() {
-    this.disableBody(true, true);
+    this.destroy();
   }
 
   deleteMissile() {
