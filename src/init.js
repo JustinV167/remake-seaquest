@@ -19,3 +19,8 @@ const config={
     },
 }
 const game=new Phaser.Game(config)
+
+if (typeof require !== 'undefined') {
+    const { ipcRenderer } = require('electron');
+    window.ipcRenderer = ipcRenderer;
+}

@@ -23,35 +23,55 @@ class Preload extends Phaser.Scene {
       progressBar.fillRect(x, y, width * value, height);
     });
 
-    this.load.spritesheet('person', '../../assets/personSwimming.png',
+    //fuente
+    this.load.font('retropix', 'assets/fonts/retropix.otf');
+
+    //ruta
+    this.load.setPath('./assets/');
+
+    //spritesheet
+    this.load.spritesheet('person', './personSwimming.png',
       {
         frameWidth: 48,frameHeight:48, 
         startFrame: 0, endFrame: 5
       });
 
   //imagen
-  this.load.image('instructive', '../../assets/instructive.png');
-  this.load.image('menu', '../../assets/Menu.png');
-  this.load.image('submarine', '../../assets/submarine_0.png');
-  this.load.image('missile', '../../assets/missile.png');
-  this.load.image('evilSubmarine', '../../assets/evilSubmarine.png');
-  this.load.image('fish', '../../assets/fish.png');
-  this.load.image('bar', '../../assets/bar.png');
-  this.load.image('progress', '../../assets/progress.png');
-  this.load.image('rainbow', '../../assets/rainbow.png');
-  this.load.image('sand', '../../assets/sandcube.png');
-  this.load.image('sea', '../../assets/sea.png');  
-  this.load.image('flares', '../../assets/flares.png');
-  this.load.image('Enemyflares', '../../assets/EnemyFlares.png');
+  this.load.image('instructive', './instructive.png');
+  this.load.image('menu', ('./Menu.png'));
+  this.load.image('submarine', './submarine_0.png');
+  this.load.image('missile', './/missile.png');
+  this.load.image('evilSubmarine', './evilSubmarine.png');
+  this.load.image('fish', './fish.png');
+  this.load.image('bar', './bar.png');
+  this.load.image('rainbow', './rainbow.png');
+  this.load.image('sand', './sandcube.png');
+  this.load.image('sea', './sea.png');  
+  this.load.image('flares', './flares.png');
+  this.load.image('Enemyflares', './EnemyFlares.png');
 
   //audio
-  this.load.audio('get', '../../assets/audio/get.mp3')
-  this.load.audio('recover', '../../assets/audio/recover.wav')
-  this.load.audio('shoot', '../../assets/audio/shoot.wav')
-  this.load.audio('hit', '../../assets/audio/hit.wav')
-  this.load.audio('die', '../../assets/audio/die.wav')
-  this.load.audio('asphyxia', '../../assets/audio/outOfOxygen.mp3')
+  this.load.audio('get', './audio/get.mp3')
+  this.load.audio('recover', './audio/recover.wav')
+  this.load.audio('shoot', './audio/shoot.wav')
+  this.load.audio('hit', './audio/hit.wav')
+  this.load.audio('die', './audio/die.wav')
 
+
+
+  }
+
+  create(){
+    WebFont.load({
+            custom: {
+                families: ['retropix'],
+                urls: ['assets/fonts/retropix.css']
+            },
+            active: () => {
+                console.log('Fuente cargada correctamente');
+                this.scene.start('Menu');
+            }
+        });
   }
 
 }
