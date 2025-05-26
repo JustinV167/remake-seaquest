@@ -28,6 +28,19 @@ class Person extends Phaser.Physics.Arcade.Sprite {
     }
   }
   reset() {
+    if (this.body) {
+        this.scene.physics.world.remove(this.body);
+    }
+    
+    // 2. Limpiar todos los eventos
+    this.removeAllListeners();
+    
+    // 3. Remover de grupos
+    if (this.scene.persons.contains(this)) {
+        this.scene.persons.remove(this, true, true);
+    }
+    
+    // 4. Destrucción final
     this.destroy();
   }
 }

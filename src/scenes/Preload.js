@@ -23,12 +23,12 @@ class Preload extends Phaser.Scene {
       progressBar.fillRect(x, y, width * value, height);
     });
 
-    //fuente
-    this.load.font('retropix', 'assets/fonts/retropix.otf');
-
     //ruta
     this.load.setPath('./assets/');
 
+    //fuente
+    this.load.font('retropix', './fonts/retropix.otf');
+    
     //spritesheet
     this.load.spritesheet('person', './personSwimming.png',
       {
@@ -38,6 +38,7 @@ class Preload extends Phaser.Scene {
 
   //imagen
   this.load.image('instructive', './instructive.png');
+  this.load.image('rules', './rules.png');
   this.load.image('menu', ('./Menu.png'));
   this.load.image('submarine', './submarine_0.png');
   this.load.image('missile', './/missile.png');

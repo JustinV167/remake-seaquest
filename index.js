@@ -1,35 +1,41 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
-// Configura el protocolo personalizado
-function setupIPC() {
-  // Para obtener rutas de la aplicación
-  ipcMain.handle('get-path', (_, type) => {
-    return app.getPath(type); // 'exe', 'userData', 'appData', etc.
-  });
-
-  // Para obtener la ruta de assets (específico para tu caso)
-  ipcMain.handle('get-asset-path', (_, relativePath) => {
-    return path.join(process.resourcesPath, 'assets', relativePath);
-  });
-}
+let mainWindow;
 
 function createWindow() {
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+  mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 720,
+    frame: false,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true, // IMPORTANTE para seguridad
-      nodeIntegration: false  // IMPORTANTE para seguridad
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
     }
   });
 
-  // Carga el index.html
-  win.loadFile('index.html');
+  mainWindow.loadFile('index.html');
+
+  // Abrir herramientas de desarrollo (opcional)
+  // mainWindow.webContents.openDevTools();
+
+  mainWindow.on('closed', function () {
+    mainWindow = null;
+  });
 }
 
-app.whenReady().then(() => {
-  setupIPC();
-  createWindow();
+ipcMain.on('close-game', () => {
+    const window = BrowserWindow.getFocusedWindow();
+    if (window) window.close();
+});
+
+app.whenReady().then(createWindow);
+
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('activate', function () {
+  if (mainWindow === null) createWindow();
 });

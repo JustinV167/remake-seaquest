@@ -15,7 +15,8 @@ class EnemySpawner {
   update(time, delta, alive) {
        this.waveCooldown += delta;
         if (this.waveCooldown >= this.spawnInterval) {
-            this.scene.time.delayedCall(500, () => {
+          
+            this.scene.time.delayedCall(1000, () => {
               if (this.alive === false) this.scene.enemySpawner.clearAllEnemies();
             });
             this.spawnWave(alive);
@@ -30,19 +31,19 @@ class EnemySpawner {
   }
 
   increaseDifficulty(difficulty, next) {
-    this.maxEnemies = Math.min(5 + difficulty, 15);
-    this.waveSize = Math.min(2 + Math.floor(difficulty / 2), 6);
-    this.spawnInterval = Math.max(1500, 3000 - (difficulty + 5));
-    this.enemySpeed = Math.min(350, this.enemySpeed + 5);
+    this.maxEnemies = Math.min(2 + difficulty, 7);
+    this.waveSize = Math.min(2 + Math.floor(difficulty / 2), 5);
+    this.spawnInterval = Math.max(3000, 4000 - (difficulty + 1));
+    this.enemySpeed = Math.min(240, this.enemySpeed + 2.5);
     console.log('Dificultad aumentada a nivel ' + difficulty);
     console.log(this.scene.difficultyLevel)
   }
 
   spawnWave(alive) {
   if (this.activeEnemies >= this.maxEnemies) return;
-
+  console.log(this.activeEnemies)
   const waveSize = Phaser.Math.Between(2, 4);
-  const delay = 300;
+  const delay = 2000;
 
     for (let i = 0; i < waveSize; i++) {
       this.scene.time.delayedCall(i * delay, () => {
@@ -69,12 +70,13 @@ class EnemySpawner {
         this.scene.physics.add.collider(this.scene.player, enemy.missile, this.scene.playerHitEnemy.bind(this));
   }
   enemy.speed = this.enemySpeed
-  active++;
+  this.activeEnemies++ ;
   this.scene.enemies.add(enemy);
   this.scene.enemies.setDepth(0);
+console.log("Eventos:", enemy.listenerCount('update'));  
 
   enemy.on('enemyOut', () => {
-    active--;
+    this.activeEnemies--;
     });
   }
 }

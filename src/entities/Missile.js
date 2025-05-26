@@ -24,6 +24,14 @@ class Missile extends Phaser.Physics.Arcade.Sprite {
     reset() {
         if (this.resetCallback)
             this.resetCallback(this.id)
+      if (this.body) {
+        this.scene.physics.world.remove(this.body);
+    }
+    
+    // 2. Limpiar todos los eventos
+    this.removeAllListeners();
+    
+    // 4. Destrucción final
         this.destroy();
     }
 }

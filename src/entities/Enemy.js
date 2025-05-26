@@ -71,15 +71,26 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     });
  
     this.scene.time.delayedCall(500, () => {
-      deathEmitter.destroy(); 
+      deathEmitter.setVisible(false); 
     });
 
-    this.setTint(0x000000);
     this.scene.cameras.main.shake(300, 0.02);
     this.reset()
   }
 
   reset() {
+
+    if (this.body) {
+        this.scene.physics.world.remove(this.body);
+    }
+    
+    // 2. Limpiar todos los eventos
+    this.removeAllListeners();
+    
+    // 3. Remover de grupos
+    if (this.scene.enemies.contains(this)) {
+        this.scene.enemies.remove(this, true, true);
+    }
     this.destroy();
   }
 

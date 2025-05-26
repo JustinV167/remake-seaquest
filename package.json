@@ -1,6 +1,7 @@
 {
   "name": "phaser",
   "version": "1.0.0",
+  "description": "Remake del clásico juego de la Atari 2600 SeaQuest, implementado con Phaser y Electron",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,14 +10,15 @@
     "build": "electron-builder"
   },
   "keywords": [],
-  "author": "",
+  "author": "Rafael Vasquez <vasquezsrafael05@gmail.com>, Justin Vegas",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "electron": "^36.3.1",
-    "electron-builder": "^26.0.12",
     "http-server": "^14.1.1",
     "path": "^0.12.7",
     "phaser": "^3.88.2"
+  },
+  "devDependencies": {
+    "electron": "^36.3.1",
+    "electron-builder": "^26.0.12"
   }
 }

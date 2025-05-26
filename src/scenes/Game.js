@@ -27,7 +27,6 @@ class Game extends Phaser.Scene {
     this.enemyTypes = ['fish', 'evilSubmarine'];
     this.spawnCooldown = 0;
     this.spawnTimer = 0;
-    this.maxEnemies = 5;
     this.spawnInterval = 3000;
     this.lifes=3
   }
@@ -46,12 +45,12 @@ class Game extends Phaser.Scene {
     this.personsSpawner=new PersonSpawner(this)
     // Entidades
     this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine',this.lifes, this.audioManager)
+  this.debugText = this.add.text(800, 10, '', { font: '16px Courier', fill: '#00ff00' });
     this.rechargeZone.entity = this.player
     this.worldTemplate.addEntityCollider(this.player)
     this.oxygenBar.endOxygenCallback=this.player.outOxigen.bind(this.player)
     this.oxygenBar.fullOxygenCallback=this.player.rechargeAllOxygen.bind(this.player)
     this.lifes.restLifeCallback=this.player.recover.bind(this.player)
-    this.activeEnemies = 0;
 
     this.persons = this.physics.add.group()
     this.enemies = this.physics.add.group()
@@ -68,7 +67,7 @@ class Game extends Phaser.Scene {
       this.nextDifficulty++
       this.difficultyLevel++
       this.forRound += 10
-      this.player.speed += 2.5
+      this.player.speed <= 240 ? this.player.speed += 2.5 : undefined
       this.enemySpawner.increaseDifficulty(this.difficultyLevel, this.nextDifficulty);
     }
     
@@ -76,6 +75,12 @@ class Game extends Phaser.Scene {
       this.extraLifeTrigger += 10000
       this.lifes.addLifes(1)
     }
+
+  //debug de fps de acuerdo a los enemigos
+  this.debugText.setText([
+    `Enemigos: ${this.enemySpawner.activeEnemies}/${this.enemySpawner.maxEnemies}`,
+    `FPS: ${Math.floor(this.game.loop.actualFps)}`
+  ]);
 
     this.enemySpawner.update(time, delta, this.player.alive)
     this.player.movement(this.cursors)
@@ -99,7 +104,7 @@ class Game extends Phaser.Scene {
     this.audioManager.play('hit', { seek: 0, volume: 1 });
     projectile.reset()
     enemies.die()
-    this.activeEnemies--;
+    this.enemySpawner.activeEnemies--;
     this.systemPoints.addPoints(this.forRound)
   }
 
