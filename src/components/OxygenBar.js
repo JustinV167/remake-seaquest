@@ -1,7 +1,8 @@
 class OxygenBar {
-    constructor(scene, init = 100, endOxygenCallback, fullOxygenCallback) {
+    constructor(scene, init = 100, audio, endOxygenCallback, fullOxygenCallback) {
         this.scene = scene
         this.nOxygen = init
+        this.audio = audio
         this.endOxygenCallback = endOxygenCallback
         this.fullOxygenCallback = fullOxygenCallback
         const baseEvent = {
@@ -53,6 +54,10 @@ class OxygenBar {
 
         if (this.nOxygen < 40) {
         this.oxygenBar.setFillStyle(0xff0000)
+        }
+
+        if (this.nOxygen <= 100 && this.nOxygen >= 99) {
+        this.audio.play('recover', { volume: 0.8 })
         }
 
         this.updateOxygenBar()

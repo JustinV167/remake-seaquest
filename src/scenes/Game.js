@@ -34,16 +34,16 @@ class Game extends Phaser.Scene {
 
   }
   create() {
+    this.audioManager = new AudioManager(this);
     this.forRound = 20
     // Elementos visuales
     this.worldTemplate = new WorldTemplate(this)
     this.enemySpawner = new EnemySpawner(this)
     this.personsMenu = new PersonsMenu(this)
     this.personSave = this.personsMenu.counter.length
-    this.oxygenBar = new OxygenBar(this, null)
+    this.oxygenBar = new OxygenBar(this, null, this.audioManager)
     this.lifes = new Lifes(this, null, () => setTimeout(() => this.scene.start('GameOver'), 1000))
     this.systemPoints = new SystemPoints(this)
-    this.audioManager = new AudioManager(this);
     this.personsSpawner = new PersonSpawner(this)
     this.rechargeZone = new RechargeZone(this, this.oxygenBar, 0, 70, async () => {
       this.player.body.moves = false

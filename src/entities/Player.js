@@ -120,7 +120,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
   rechargeAllOxygen() {
     this.body.moves = true
-    this.audio.play('recover', { volume: 0.8 })
   }
   recover() {
     this.surface = false
