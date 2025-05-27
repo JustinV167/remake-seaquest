@@ -1,5 +1,5 @@
 class Lifes {
-    constructor(scene, restLifeCallback, outLifesCallback, maxLife = 3, initLife = 3) {
+    constructor(scene, restLifeCallback, outLifesCallback, maxLife = 5, initLife = 3) {
         this.scene = scene
         this.maxLife = maxLife
         this.onlyLifes = []

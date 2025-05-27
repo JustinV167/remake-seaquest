@@ -3,7 +3,7 @@ import Enemy from './Enemy.js'
 class EnemySpawner {
   constructor(scene){
   this.scene = scene;
-        this.maxEnemies = 5;
+        this.maxEnemies = 4;
         this.maxWidth = this.scene.cameras.main.width
         this.activeEnemies = 0;
         this.enemySpeed = 180;
@@ -34,14 +34,11 @@ class EnemySpawner {
     this.maxEnemies = Math.min(2 + difficulty, 7);
     this.waveSize = Math.min(2 + Math.floor(difficulty / 2), 5);
     this.spawnInterval = Math.max(3000, 4000 - (difficulty + 1));
-    this.enemySpeed = Math.min(240, this.enemySpeed + 2.5);
-    console.log('Dificultad aumentada a nivel ' + difficulty);
-    console.log(this.scene.difficultyLevel)
+    this.enemySpeed = Math.min(220, this.enemySpeed + 2.5);
   }
 
   spawnWave(alive) {
   if (this.activeEnemies >= this.maxEnemies) return;
-  console.log(this.activeEnemies)
   const waveSize = Phaser.Math.Between(2, 4);
   const delay = 2000;
 
@@ -73,7 +70,6 @@ class EnemySpawner {
   this.activeEnemies++ ;
   this.scene.enemies.add(enemy);
   this.scene.enemies.setDepth(0);
-console.log("Eventos:", enemy.listenerCount('update'));  
 
   enemy.on('enemyOut', () => {
     this.activeEnemies--;

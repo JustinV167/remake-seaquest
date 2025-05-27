@@ -25,7 +25,7 @@
     "appId": "seaquest",
     "productName": "Seaquest",
     "directories": {
-      "output": "dist"
+    "output": "dist"
     }
   },
   "linux": {

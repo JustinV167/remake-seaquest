@@ -1,13 +1,16 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+const setAppIcon = require('./set-icon'); // Importa la función
 
 let mainWindow;
 
 function createWindow() {
+  const icon = setAppIcon(); // Obtiene el icono configurado
+
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 720,
-    frame: false,
+        icon: icon, // Asigna el icono aquí
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,

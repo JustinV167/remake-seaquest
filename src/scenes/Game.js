@@ -14,7 +14,6 @@ class Game extends Phaser.Scene {
   constructor() {
     super({ key: "Game" })
     this.personSave = 0
-    this.points = 0
     this.extraLifeTrigger = 10000
     this.forRound
     this.level = 1
@@ -29,7 +28,8 @@ class Game extends Phaser.Scene {
     this.spawnTimer = 0;
     this.spawnInterval = 3000;
     this.lifes = 3
-    this.pointOfOxygen=10
+    this.noInstakill = true
+    this.pointOfOxygen=250
     this.pointOfPerson=50
 
   }
@@ -47,10 +47,17 @@ class Game extends Phaser.Scene {
     this.personsSpawner = new PersonSpawner(this)
     this.rechargeZone = new RechargeZone(this, this.oxygenBar, 0, 70, async () => {
       this.player.body.moves = false
-      if (this.personsMenu.counter.length < 6) {
+        if (this.personsMenu.counter.length < 6) {
+          if (this.noInstakill == true ) {
+          this.noInstakill = false 
+          return true
+          }
         this.personsMenu.removePerson()
         return true
       } else {
+        this.time.delayedCall(1000, () => {
+        this.enemySpawner.clearAllEnemies();
+        });
         this.oxygenBar.setStateDiscount({ paused: true })
         let oxygenPoints=this.pointOfOxygen*parseInt(this.oxygenBar.nOxygen/10)
         this.oxygenBar.timerReduceOxygen(10, 500)
@@ -59,6 +66,10 @@ class Game extends Phaser.Scene {
         let timerPersons=this.personsMenu.counter.length*500
         this.personsMenu.removeAllPerson(500)
         this.systemPoints.addPoints(this.pointOfPerson*6,this.pointOfPerson,500)
+        this.time.delayedCall(3000, () => {
+        this.enemySpawner.clearAllEnemies();
+        });
+        this.level++
         await new Promise((res)=>setTimeout(()=>res(),timerPersons))
         return true        
       }
@@ -72,8 +83,12 @@ class Game extends Phaser.Scene {
     this.oxygenBar.fullOxygenCallback = this.player.rechargeAllOxygen.bind(this.player)
     this.lifes.restLifeCallback = this.player.recover.bind(this.player)
 
-    this.persons = this.physics.add.group()
-    this.enemies = this.physics.add.group()
+    this.persons = this.physics.add.group({
+      maxSize: 4
+    })
+    this.enemies = this.physics.add.group({
+      maxSize: 4
+    })
     this.enemies.setDepth(0)
 
     // Eventos
@@ -87,12 +102,14 @@ class Game extends Phaser.Scene {
       this.nextDifficulty++
       this.difficultyLevel++
       this.forRound += 10
-      this.player.speed <= 240 ? this.player.speed += 2.5 : undefined
+      this.player.speed <= 220 ? this.player.speed += 2.5 : undefined
       this.enemySpawner.increaseDifficulty(this.difficultyLevel, this.nextDifficulty);
     }
 
     if (this.systemPoints.points >= this.extraLifeTrigger) {
+      this.audioManager.play('1up', { seek: 0.2, volume: 2 });
       this.extraLifeTrigger += 10000
+      console.log(this.extraLifeTrigger)
       this.lifes.addLifes(1)
     }
 
@@ -115,7 +132,6 @@ class Game extends Phaser.Scene {
     person.reset()
     if (this.personsMenu.counter.length < 6) {
       this.personSave = this.personsMenu.counter.length
-      this.level++
       this.personsMenu.addPerson()
     }
   }

@@ -58,6 +58,7 @@ class Preload extends Phaser.Scene {
   this.load.audio('hit', './audio/hit.wav')
   this.load.audio('die', './audio/die.wav')
   this.load.audio('alert', './audio/alert.wav')
+  this.load.audio('1up', './audio/1up.wav')
 
   }
 

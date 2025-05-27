@@ -56,10 +56,6 @@ class OxygenBar {
         this.oxygenBar.setFillStyle(0xff0000)
         }
 
-        if (this.nOxygen <= 96 && this.nOxygen >= 95) {
-        this.audio.play('recover', { volume: 0.8 })
-        }
-
         this.updateOxygenBar()
         this.nOxygen -= 0.1
     }
@@ -70,6 +66,11 @@ class OxygenBar {
             this.recoverOxygen.paused = true
             return
         }
+
+        if (this.nOxygen <= 100 && this.nOxygen >= 98) {
+        this.audio.play('recover', { volume: 0.8 })
+        }
+
         this.nOxygen += 0.1
         this.updateOxygenBar()
     }
