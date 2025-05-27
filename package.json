@@ -1,5 +1,5 @@
 {
-  "name": "Seaquest",
+  "name": "seaquest",
   "version": "1.0.0",
   "description": "Remake del clásico juego de la Atari 2600 SeaQuest, implementado con Phaser y Electron",
   "main": "main.js",
@@ -10,7 +10,7 @@
     "build": "electron-builder"
   },
   "keywords": [],
-  "author": "Rafael Vasquez <vasquezsrafael05@gmail.com>, Justin Vegas",
+  "author": "Rafael Vasquez <vasquezsrafael05@gmail.com>, Justin Vegas <justinvegas14@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "http-server": "^14.1.1",
@@ -25,32 +25,35 @@
     "appId": "seaquest",
     "productName": "Seaquest",
     "directories": {
-    "output": "dist"
-    }
-  },
-  "linux": {
-    "target": ["AppImage", "deb"],
-    "icon": "build/icons/icon.png",
-    "category": "Game",
-    "desktop": {
-      "entry": {
-        "Name": "Seaquest",
-        "Comment": "Remake del clásico de la Atari 2600",
-        "StartupWMClass": "seaquest",
-        "Icon": "icon",
-        "Categories": "Game;",
-        "Type": "Application"
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icons/icon.ico"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "build/icons/icon.png",
+      "category": "Game",
+      "desktop": {
+        "entry": {
+          "Name": "Seaquest",
+          "Comment": "Remake del clásico de la Atari 2600",
+          "StartupWMClass": "seaquest",
+          "Icon": "icon",
+          "Categories": "Game;",
+          "Type": "Application"
+        }
       }
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icons/icon.icns",
+      "category": "public.app-category.games"
     }
-  },
-  "win": {
-    "target": "nsis",
-    "icon": "build/icons/256x256.ico"
-  },
-  "mac": {
-    "target": "dmg",
-    "icon": "build/icons/icon.icns",
-    "category": "public.app-category.games"
   },
   "nsis": {
     "oneClick": false,

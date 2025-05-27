@@ -91,6 +91,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     if (this.scene.enemies.contains(this)) {
         this.scene.enemies.remove(this, true, true);
     }
+    this.missile.forEach(item=>{
+      item.reset()
+      item.destroy()
+    })
+    this.missile=[]
     this.destroy();
   }
 
