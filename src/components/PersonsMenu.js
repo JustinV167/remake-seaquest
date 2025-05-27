@@ -13,12 +13,15 @@ class PersonsMenu{
         }
     }
     removePerson(){
-        this.counter[this.counter.length].destroy();
-        this.counter.shift()
+        this.counter[this.counter.length-1]?.destroy();
+        this.counter.pop()
     }
-    removeAllPerson(){
-        this.counter.forEach(item=>item.destroy())
-        this.counter=[]
+    removeAllPerson(interval=0){
+         let count = setInterval(() => {
+             if (this.counter.length == 0) {return clearInterval(count) }
+            this.counter[this.counter.length-1]?.destroy()
+            this.counter.pop()
+        }, interval)
     }
 }
 export default PersonsMenu

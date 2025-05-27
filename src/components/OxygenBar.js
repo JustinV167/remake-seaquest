@@ -76,5 +76,12 @@ class OxygenBar {
     updateOxygenBar() {
         this.oxygenBar.width = this.oxygenWidth * this.nOxygen / 100
     }
+    timerReduceOxygen(jump=this.nOxygen,interval=0){
+         let count = setInterval(() => {
+            this.nOxygen = jump > this.nOxygen ? 0 : this.nOxygen - jump
+            this.updateOxygenBar()
+            if (this.nOxygen == 0) { clearInterval(count) }
+        }, interval)
+    }
 }
 export default OxygenBar

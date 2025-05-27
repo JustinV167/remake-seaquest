@@ -1,5 +1,5 @@
 class RechargeZone {
-    constructor(scene, OxygenBar,x,y) {
+    constructor(scene, OxygenBar,x,y,callbackRecharge=()=>true) {
         this.scene = scene
         this.OxygenBar = OxygenBar
         let rectagleEntity = this.scene.add.rectangle(x,y, this.scene.cameras.main.width, 10, 0xffffff).setOrigin(0, 0.5).setAlpha(0)
@@ -14,10 +14,12 @@ class RechargeZone {
         }
         this.scene.time.addEvent({ ...baseEvent, callback: this.update, })
         this.entity
-        this.prevCollision = true
+        this.callbackRecharge=callbackRecharge
+        this.prevCollision = false
     }
-    collisionRechargeZone() {
-        if (this.OxygenBar.nOxygen < 100) {
+    async collisionRechargeZone() {
+        if (this.OxygenBar.nOxygen < 100 && !this.prevCollision ) {
+            if( ! await this.callbackRecharge()) return
             this.OxygenBar.setStateRecover({ paused: false, delay: 1 })
             this.OxygenBar.setStateDiscount({ paused: true })
             this.entity.body.moves=false

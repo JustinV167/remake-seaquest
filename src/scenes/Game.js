@@ -28,7 +28,10 @@ class Game extends Phaser.Scene {
     this.spawnCooldown = 0;
     this.spawnTimer = 0;
     this.spawnInterval = 3000;
-    this.lifes=3
+    this.lifes = 3
+    this.pointOfOxygen=10
+    this.pointOfPerson=50
+
   }
   create() {
     this.forRound = 20
@@ -37,25 +40,42 @@ class Game extends Phaser.Scene {
     this.enemySpawner = new EnemySpawner(this)
     this.personsMenu = new PersonsMenu(this)
     this.personSave = this.personsMenu.counter.length
-    this.oxygenBar = new OxygenBar(this,null)
-    this.rechargeZone = new RechargeZone(this, this.oxygenBar,0, 70)
-    this.lifes=new Lifes(this,null,()=>setTimeout(()=>this.scene.start('GameOver'),1000))
-    this.systemPoints=new SystemPoints(this)
+    this.oxygenBar = new OxygenBar(this, null)
+    this.lifes = new Lifes(this, null, () => setTimeout(() => this.scene.start('GameOver'), 1000))
+    this.systemPoints = new SystemPoints(this)
     this.audioManager = new AudioManager(this);
-    this.personsSpawner=new PersonSpawner(this)
+    this.personsSpawner = new PersonSpawner(this)
+    this.rechargeZone = new RechargeZone(this, this.oxygenBar, 0, 70, async () => {
+      this.player.body.moves = false
+      if (this.personsMenu.counter.length < 6) {
+        this.personsMenu.removePerson()
+        return true
+      } else {
+        this.oxygenBar.setStateDiscount({ paused: true })
+        let oxygenPoints=this.pointOfOxygen*parseInt(this.oxygenBar.nOxygen/10)
+        this.oxygenBar.timerReduceOxygen(10, 500)
+        this.systemPoints.addPoints(oxygenPoints,this.pointOfOxygen,500)
+        await new Promise((res)=>setTimeout(()=>res(),500*parseInt((this.oxygenBar.nOxygen/10)+1)))
+        let timerPersons=this.personsMenu.counter.length*500
+        this.personsMenu.removeAllPerson(500)
+        this.systemPoints.addPoints(this.pointOfPerson*6,this.pointOfPerson,500)
+        await new Promise((res)=>setTimeout(()=>res(),timerPersons))
+        return true        
+      }
+    })
     // Entidades
-    this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine',this.lifes, this.audioManager)
-  this.debugText = this.add.text(800, 10, '', { font: '16px Courier', fill: '#00ff00' });
+    this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine', this.lifes, this.audioManager)
+    this.debugText = this.add.text(800, 10, '', { font: '16px Courier', fill: '#00ff00' });
     this.rechargeZone.entity = this.player
     this.worldTemplate.addEntityCollider(this.player)
-    this.oxygenBar.endOxygenCallback=this.player.outOxigen.bind(this.player)
-    this.oxygenBar.fullOxygenCallback=this.player.rechargeAllOxygen.bind(this.player)
-    this.lifes.restLifeCallback=this.player.recover.bind(this.player)
+    this.oxygenBar.endOxygenCallback = this.player.outOxigen.bind(this.player)
+    this.oxygenBar.fullOxygenCallback = this.player.rechargeAllOxygen.bind(this.player)
+    this.lifes.restLifeCallback = this.player.recover.bind(this.player)
 
     this.persons = this.physics.add.group()
     this.enemies = this.physics.add.group()
     this.enemies.setDepth(0)
-    
+
     // Eventos
     this.max = this.cameras.main.width
     this.cursors = this.input.keyboard.createCursorKeys()
@@ -70,17 +90,17 @@ class Game extends Phaser.Scene {
       this.player.speed <= 240 ? this.player.speed += 2.5 : undefined
       this.enemySpawner.increaseDifficulty(this.difficultyLevel, this.nextDifficulty);
     }
-    
+
     if (this.systemPoints.points >= this.extraLifeTrigger) {
       this.extraLifeTrigger += 10000
       this.lifes.addLifes(1)
     }
 
-  //debug de fps de acuerdo a los enemigos
-  this.debugText.setText([
-    `Enemigos: ${this.enemySpawner.activeEnemies}/${this.enemySpawner.maxEnemies}`,
-    `FPS: ${Math.floor(this.game.loop.actualFps)}`
-  ]);
+    //debug de fps de acuerdo a los enemigos
+    this.debugText.setText([
+      `Enemigos: ${this.enemySpawner.activeEnemies}/${this.enemySpawner.maxEnemies}`,
+      `FPS: ${Math.floor(this.game.loop.actualFps)}`
+    ]);
 
     this.enemySpawner.update(time, delta, this.player.alive)
     this.player.movement(this.cursors)
@@ -90,11 +110,11 @@ class Game extends Phaser.Scene {
     this.physics.add.collider(this.enemies, this.player, this.playerHitEnemy.bind(this));
   }
 
-  personCollider(player,person) {
+  personCollider(player, person) {
     this.audioManager.play('get', { seek: 0.5, rate: 1, volume: 2 });
     person.reset()
-    if (this.personSave < 6) {
-      this.personSave++
+    if (this.personsMenu.counter.length < 6) {
+      this.personSave = this.personsMenu.counter.length
       this.level++
       this.personsMenu.addPerson()
     }

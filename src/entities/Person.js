@@ -5,12 +5,14 @@ class Person extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setCollideWorldBounds(false);
+    if (!this.scene.anims.get('person__move')) {
     this.scene.anims.create({
       key: 'person__move',
       frames: this.anims.generateFrameNumbers(texture, { start: 0, end: 5, first: 0 }),
       frameRate: 10,
       repeat: -1
-    });
+    })
+  }
     this.speed = speed;
     this.flipX = initDirection
     this.direction = initDirection
