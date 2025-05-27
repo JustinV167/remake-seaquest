@@ -22,17 +22,12 @@
     "electron-builder": "^26.0.12"
   },
   "build": {
-  "appId": "seaquest",
-  "productName": "Seaquest",
-  "directories": {
-    "output": "dist"
+    "appId": "seaquest",
+    "productName": "Seaquest",
+    "directories": {
+      "output": "dist"
+    }
   },
-  "files": [
-    "**/*",
-    "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
-    "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
-    "!**/*.map"
-  ],
   "linux": {
     "target": ["AppImage", "deb"],
     "icon": "build/icons/icon.png",
