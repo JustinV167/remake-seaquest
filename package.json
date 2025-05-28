@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx http-server",
+    "dev": "vite",
+    "vite": "vite build",
     "start": "electron .",
     "build": "electron-builder"
   },
@@ -13,9 +14,9 @@
   "author": "Rafael Vasquez <vasquezsrafael05@gmail.com>, Justin Vegas <justinvegas14@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "http-server": "^14.1.1",
     "path": "^0.12.7",
-    "phaser": "^3.88.2"
+    "phaser": "^3.88.2",
+    "vite": "^6.3.5"
   },
   "devDependencies": {
     "electron": "^36.3.1",

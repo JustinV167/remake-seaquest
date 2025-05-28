@@ -9,6 +9,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.audio = audio
     this.lifesSystem = lifesSystem
     this.missile = [];
+        this.missilePool = []; // Para reusar misiles
     this.limit = 90
     this.surface = false
     this.alive = true;
@@ -25,6 +26,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.world.debugGraphic = debugGraphics;
     */
   }
+
+
 
   movement(cursors) {
     if (!cursors) return
@@ -46,8 +49,26 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (cursors.space.isDown && this.fireOn && this.alive == true && this.surface == false) {
+let missile;
+      if (this.missilePool.length > 0) {
+        missile = this.missilePool.pop();
+        missile.setActive(true);
+        missile.setVisible(true);
+        missile.body.enable = true;
+      } else {
+        missile = new Missile(
+          this.scene, 
+          this.x, 
+          this.y, 
+          "missile", 
+          this.flipX, 
+          () => {
+            this.missilePool.push(missile); // Reciclamos al finalizar
+            this.deleteMissile(); 
+          }
+        );
+      }
       this.audio.play('shoot', { seek: 0, rate: 1, volume: 1, loop: false });
-      const missile = new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this))
       this.missile.push(missile)
       this.cooldownFire()
     }
@@ -86,11 +107,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       angle: { min: 0, max: 360 },
       lifespan: 500,
       quantity: 5,
+      frequency: 50,
       blendMode: 'ADD',
       gravityY: 200,
       emitting: true
     });
-
     this.reset()
     this.scene.time.delayedCall(1000, () => {
       deathEmitter.destroy();
@@ -111,6 +132,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
   update() {
     this.missile = this.missile.filter(m => m.active);
+
     this.underWater()
     this.missile.forEach(m => m.update());
 

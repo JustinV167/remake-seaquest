@@ -20,6 +20,16 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.initialY = y; 
     this.amplitude = 6; 
     this.frequency = 0.009; 
+
+        if (this.bool) {
+      this.scene.physics.add.collider(
+        this.scene.player, 
+        this.missile, 
+        this.scene.playerHitEnemy, 
+        null, 
+        this.scene
+      );
+    }
   }
 
  preUpdate(time, delta) {
@@ -32,8 +42,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     this.missile.forEach(m => m.update());
 
-      this.shootTimer += delta;
     if (this.bool) {
+      this.shootTimer += delta;
       if (this.shootTimer >= this.shootInterval) {
         this.shoot(this.bool);
         this.shootTimer = 0;
@@ -64,14 +74,15 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     angle: { min: 0, max: 360 },
     lifespan: 200,
     scale: { start: 0.1, end: 0.3 },
-    gravityY: 50,
+    gravityY: 50,        
+    quantity: 5,
+    frequency: 100,
     accelerationX: { min: -10, max: 10 },
     accelerationY: { min: -10, max: 10 },
     alpha: { start: 1, end: 0 },
     });
- 
     this.scene.time.delayedCall(500, () => {
-      deathEmitter.setVisible(false); 
+      deathEmitter.destroy(); 
     });
 
     this.scene.cameras.main.shake(300, 0.02);
@@ -92,7 +103,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.scene.enemies.remove(this, true, true);
     }
     this.missile.forEach(item=>{
-      item.reset()
       item.destroy()
     })
     this.missile=[]
@@ -108,7 +118,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   shoot(bool){
-    if (bool === true && this.surface == false) {
+    console.log(this.missile)
+    if (bool === true && this.surface == false && this.missile < 2) {
     const missile = new Missile(this.scene, this.x, this.y, "missile", this.flipX, this.deleteMissile.bind(this))
     this.missile.push(missile)
     }

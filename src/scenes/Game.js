@@ -34,6 +34,10 @@ class Game extends Phaser.Scene {
 
   }
   create() {
+
+    this.level = 1
+    this.difficultyLevel = 1;
+    this.nextDifficulty = 2;
     this.noInstakill = true
     this.audioManager = new AudioManager(this);
     this.forRound = 20
@@ -80,6 +84,7 @@ class Game extends Phaser.Scene {
     // Entidades
     this.player = new Player(this, this.cameras.main.width / 2, 80, 'submarine', this.lifes, this.audioManager)
     this.debugText = this.add.text(800, 10, '', { font: '16px Courier', fill: '#00ff00' });
+
     this.rechargeZone.entity = this.player
     this.worldTemplate.addEntityCollider(this.player)
     this.oxygenBar.endOxygenCallback = this.player.outOxigen.bind(this.player)
@@ -101,6 +106,7 @@ class Game extends Phaser.Scene {
   }
 
   update(time, delta) {
+
     if (this.level >= this.nextDifficulty) {
       this.nextDifficulty++
       this.difficultyLevel++
@@ -119,12 +125,14 @@ class Game extends Phaser.Scene {
     //debug de fps de acuerdo a los enemigos
     this.debugText.setText([
       `Enemigos: ${this.enemySpawner.activeEnemies}/${this.enemySpawner.maxEnemies}`,
-      `FPS: ${Math.floor(this.game.loop.actualFps)}`
+      `FPS: ${Math.floor(this.game.loop.actualFps)}`,
+          `Sprites: ${this.children.list.length}` // Número de objetos en escena
     ]);
 
     this.enemySpawner.update(time, delta, this.player.alive)
     this.player.movement(this.cursors)
     this.player.update()
+    this.physics.world.setFPS(60); // Limita las actualizaciones físicas
     this.physics.world.collide(this.persons, this.player, this.personCollider.bind(this))
     this.physics.add.collider(this.player.missile, this.enemies, this.projectileHitEnemy.bind(this));
     this.physics.add.collider(this.enemies, this.player, this.playerHitEnemy.bind(this));
