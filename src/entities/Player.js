@@ -79,6 +79,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     });
   }
   die() {
+    this.scene.noInstakill = true
     const deathEmitter = this.scene.add.particles(this.x, this.y, 'flares', {
       scale: { start: 0.3, end: 0 },
       speed: { min: 50, max: 300 },
@@ -117,6 +118,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   outOxigen() {
     if (this.alive)
       this.takeDamage()
+      this.scene.noInstakill = true
   }
   rechargeAllOxygen() {
     this.body.moves = true

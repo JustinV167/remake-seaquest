@@ -34,6 +34,7 @@ class Game extends Phaser.Scene {
 
   }
   create() {
+    this.noInstakill = true
     this.audioManager = new AudioManager(this);
     this.forRound = 20
     // Elementos visuales
@@ -47,11 +48,13 @@ class Game extends Phaser.Scene {
     this.personsSpawner = new PersonSpawner(this)
     this.rechargeZone = new RechargeZone(this, this.oxygenBar, 0, 70, async () => {
       this.player.body.moves = false
-        if (this.personsMenu.counter.length < 6) {
+      if (this.personsMenu.counter.length < 1) {
           if (this.noInstakill == true ) {
           this.noInstakill = false 
           return true
           }
+        this.player.takeDamage()
+      } else if (this.personsMenu.counter.length < 6) {
         this.personsMenu.removePerson()
         return true
       } else {

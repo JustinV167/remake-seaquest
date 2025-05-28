@@ -16,7 +16,6 @@ export default class GameOver extends Phaser.Scene {
         this.personSave = this.personsMenu.counter.length
         this.oxygenBar = new OxygenBar(this, null)
         this.lifes = new Lifes(this, null, null, 0, 0)
-        const { ipcRenderer } = require('electron');
 
         this.title = this.add.text(this.sys.game.config.width / 2, this.sys.game.config.width / 4, 'Has Perdido!', {
             font: '48px Retropix',
@@ -74,18 +73,24 @@ export default class GameOver extends Phaser.Scene {
         });
 
         this.exitButton.on('pointerdown', () => {
-            this.game.destroy(true)
-            ipcRenderer.send('close-game');
-
+        this.render()
         });
 
         this.exitKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         this.exitKey.on('down', () => {
-            this.game.destroy(true)
-            ipcRenderer.send('close-game');
-
+        this.render()
         })
 
     }
+
+  render(){
+
+          if (typeof require !== 'undefined' && typeof process !== 'undefined') {
+        const { ipcRenderer } = require('electron');
+            ipcRenderer.send('close-game');
+          } else {
+            this.game.destroy(true)
+          }
+  }
 }
