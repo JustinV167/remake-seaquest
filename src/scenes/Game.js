@@ -29,8 +29,8 @@ class Game extends Phaser.Scene {
     this.spawnInterval = 3000;
     this.lifes = 3
     this.noInstakill = true
-    this.pointOfOxygen=250
-    this.pointOfPerson=50
+    this.pointOfOxygen = 250
+    this.pointOfPerson = 50
 
   }
   create() {
@@ -46,39 +46,42 @@ class Game extends Phaser.Scene {
     this.enemySpawner = new EnemySpawner(this)
     this.personsMenu = new PersonsMenu(this)
     this.personSave = this.personsMenu.counter.length
-    this.oxygenBar = new OxygenBar(this, null, this.audioManager)
-    this.lifes = new Lifes(this, null, () => setTimeout(() => this.scene.start('GameOver'), 1000))
     this.systemPoints = new SystemPoints(this)
+    this.oxygenBar = new OxygenBar(this, null, this.audioManager)
+    this.lifes = new Lifes(this, null, () => setTimeout(() => {
+      this.registry.set("Points", this.systemPoints.points)
+      this.scene.start('GameOver')
+    }, 1000))
     this.personsSpawner = new PersonSpawner(this)
     this.rechargeZone = new RechargeZone(this, this.oxygenBar, 0, 70, async () => {
       this.player.body.moves = false
       if (this.personsMenu.counter.length < 1) {
-          if (this.noInstakill == true ) {
-          this.noInstakill = false 
+        if (this.noInstakill == true) {
+          this.noInstakill = false
           return true
-          }
+        }
         this.player.takeDamage()
       } else if (this.personsMenu.counter.length < 6) {
         this.personsMenu.removePerson()
         return true
       } else {
         this.time.delayedCall(1000, () => {
-        this.enemySpawner.clearAllEnemies();
+          this.enemySpawner.clearAllEnemies();
         });
         this.oxygenBar.setStateDiscount({ paused: true })
-        let oxygenPoints=this.pointOfOxygen*parseInt(this.oxygenBar.nOxygen/10)
+        let oxygenPoints = this.pointOfOxygen * parseInt(this.oxygenBar.nOxygen / 10)
         this.oxygenBar.timerReduceOxygen(10, 500)
-        this.systemPoints.addPoints(oxygenPoints,this.pointOfOxygen,500)
-        await new Promise((res)=>setTimeout(()=>res(),500*parseInt((this.oxygenBar.nOxygen/10)+1)))
-        let timerPersons=this.personsMenu.counter.length*500
+        this.systemPoints.addPoints(oxygenPoints, this.pointOfOxygen, 500)
+        await new Promise((res) => setTimeout(() => res(), 500 * parseInt((this.oxygenBar.nOxygen / 10) + 1)))
+        let timerPersons = this.personsMenu.counter.length * 500
         this.personsMenu.removeAllPerson(500)
-        this.systemPoints.addPoints(this.pointOfPerson*6,this.pointOfPerson,500)
+        this.systemPoints.addPoints(this.pointOfPerson * 6, this.pointOfPerson, 500)
         this.time.delayedCall(3000, () => {
-        this.enemySpawner.clearAllEnemies();
+          this.enemySpawner.clearAllEnemies();
         });
         this.level++
-        await new Promise((res)=>setTimeout(()=>res(),timerPersons))
-        return true        
+        await new Promise((res) => setTimeout(() => res(), timerPersons))
+        return true
       }
     })
     // Entidades
@@ -118,7 +121,6 @@ class Game extends Phaser.Scene {
     if (this.systemPoints.points >= this.extraLifeTrigger) {
       this.audioManager.play('1up', { seek: 0.2, volume: 2 });
       this.extraLifeTrigger += 10000
-      console.log(this.extraLifeTrigger)
       this.lifes.addLifes(1)
     }
 

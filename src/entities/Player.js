@@ -17,7 +17,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.setScale(1.8);
     this.speed = 210;
     this.fireOn = true;
-    this.setDepth(0)
+    this.setDepth(1)
     this.initX = x
     this.initY = y
     //Debug de hitboxes
@@ -81,9 +81,9 @@ let missile;
   }
   takeDamage() {
     this.body.enable = false
-    this.alive = false 
+    this.alive = false
     this.scene.time.delayedCall(100, () => {
-        if (!this.alive) this.scene.enemySpawner.clearAllEnemies();
+      if (!this.alive) this.scene.enemySpawner.clearAllEnemies();
     });
     this.scene.tweens.addCounter({
       from: 0,
@@ -140,7 +140,7 @@ let missile;
   outOxigen() {
     if (this.alive)
       this.takeDamage()
-      this.scene.noInstakill = true
+    this.scene.noInstakill = true
   }
   rechargeAllOxygen() {
     this.body.moves = true
