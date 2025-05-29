@@ -110,7 +110,7 @@ export default class Menu extends Phaser.Scene {
             alpha: 1,
             duration: 1000,
             ease: 'Power2'
-        }).setDepth(3);
+        })
 
         this.skipKey.on('down', () => {
             this.scene.start('Game');
