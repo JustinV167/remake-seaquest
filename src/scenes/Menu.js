@@ -9,7 +9,7 @@ export default class Menu extends Phaser.Scene {
             fill: '#ffffff',
             stroke: '#000000',
             strokeThickness: 6
-        }).setOrigin(0.5).setDepth(10);
+        }).setOrigin(0.5).setDepth(2);
 
         this.image = this.add.image(
             this.cameras.main.width / 2,
@@ -88,14 +88,14 @@ export default class Menu extends Phaser.Scene {
             this.cameras.main.width / 3.4,
             this.cameras.main.height / 2,
             'instructive'
-        ).setAlpha(0);
+        ).setAlpha(0).setDepth(3);
         this.instrucciones.setScale(1 / 3.5)
 
         this.rules = this.add.image(
             this.cameras.main.width / 1.4,
             this.cameras.main.height / 2,
             'rules'
-        ).setAlpha(0);
+        ).setAlpha(0).setDepth(3);
         this.rules.setScale(1 / 3.5)
 
         this.skip = this.add.text(this.sys.game.config.width / 2, this.sys.game.config.width / 2, 'Pulsa la barra espaciadora para empezar', {
@@ -103,14 +103,14 @@ export default class Menu extends Phaser.Scene {
             fill: '#ffffff',
             stroke: '#000000',
             strokeThickness: 6
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(3);
 
         this.tweens.add({
             targets: [this.instrucciones, this.rules, this.skip],
             alpha: 1,
             duration: 1000,
             ease: 'Power2'
-        });
+        }).setDepth(3);
 
         this.skipKey.on('down', () => {
             this.scene.start('Game');
